@@ -1,0 +1,255 @@
+
+/* ==================================
+   HUMANI - IDENTIDAD VISUAL
+================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #080D18;
+  color: #FFFFFF;
+}
+
+/* CONTENEDOR */
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+  background: linear-gradient(135deg, #080D18, #10213A, #172B49);
+}
+
+/* TARJETA */
+
+.login-card {
+  width: 100%;
+  max-width: 430px;
+  padding: 45px 40px;
+  background: #111D30;
+  border: 1px solid #263D5C;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+/* LOGOTIPO */
+
+.logo {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.logo-icon {
+  width: 65px;
+  height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  background: #1B304C;
+  border: 1px solid #3B82F6;
+  color: #93C5FD;
+  font-size: 35px;
+  font-weight: bold;
+  border-radius: 16px;
+}
+
+.logo h1 {
+  color: #FFFFFF;
+  font-size: 30px;
+  letter-spacing: 3px;
+}
+
+.logo p {
+  color: #91A4BF;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+/* ENCABEZADO */
+
+.login-header {
+  margin-bottom: 25px;
+}
+
+.login-header h2 {
+  color: #FFFFFF;
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+.login-header p {
+  color: #91A4BF;
+  font-size: 14px;
+}
+
+/* FORMULARIO */
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  display: block;
+  color: #D7E5F7;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 9px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px;
+  background: #0B1525;
+  border: 1px solid #304866;
+  border-radius: 9px;
+  outline: none;
+  color: #FFFFFF;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.form-group input::placeholder {
+  color: #72849D;
+}
+
+.form-group input:focus {
+  border-color: #60A5FA;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+}
+
+/* BOTONES */
+
+.login-button {
+  width: 100%;
+  padding: 15px;
+  background: #16A34A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-button:hover {
+  background: #15803D;
+  transform: translateY(-2px);
+}
+
+/* COLORES GENERALES PARA FUTUROS MÓDULOS */
+
+.btn-save {
+  background: #16A34A;
+  color: #FFFFFF;
+}
+
+.btn-update {
+  background: #2563EB;
+  color: #FFFFFF;
+}
+
+.btn-delete,
+.btn-cancel {
+  background: #DC2626;
+  color: #FFFFFF;
+}
+
+.btn-save,
+.btn-update,
+.btn-delete,
+.btn-cancel {
+  border: none;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-save:hover {
+  background: #15803D;
+}
+
+.btn-update:hover {
+  background: #1D4ED8;
+}
+
+.btn-delete:hover,
+.btn-cancel:hover {
+  background: #B91C1C;
+}
+
+/* MENSAJES */
+
+.login-message {
+  margin-top: 18px;
+  padding: 12px;
+  background: #1B304C;
+  color: #93C5FD;
+  border: 1px solid #304866;
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* PIE DE PÁGINA */
+
+.login-footer {
+  text-align: center;
+  margin-top: 35px;
+  padding-top: 20px;
+  border-top: 1px solid #263D5C;
+}
+
+.login-footer p {
+  color: #CBD5E1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.login-footer span {
+  display: block;
+  color: #72849D;
+  font-size: 11px;
+  margin-top: 6px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 35px 25px;
+  }
+
+  .login-header h2 {
+    font-size: 22px;
+  }
+}
+/* Mejorar la visibilidad del texto */
+body {
+  color: #ffffff;
+}
+
+h1, h2, h3, h4, h5, h6,
+p, label, span, strong, small {
+  color: #ffffff;
+}
+
+input,
+textarea,
+select {
+  color: #ffffff;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #b8c5d8;
+}
