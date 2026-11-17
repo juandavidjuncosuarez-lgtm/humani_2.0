@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import './Dashboard.css';
+import Productos from './Productos';
 
 function Dashboard() {
   const [seccion, setSeccion] = useState('Inicio');
@@ -23,10 +24,12 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
 
+      {/* Menú lateral */}
       <aside className="sidebar">
 
         <div className="sidebar-brand">
           <div className="sidebar-logo">H</div>
+
           <div>
             <h2>HUMANI</h2>
             <span>Gestión empresarial</span>
@@ -55,6 +58,7 @@ function Dashboard() {
         <div className="sidebar-bottom">
           <div className="user-profile">
             <div className="user-avatar">A</div>
+
             <div>
               <strong>Administrador</strong>
               <span>Jefe del sistema</span>
@@ -64,9 +68,11 @@ function Dashboard() {
 
       </aside>
 
+      {/* Contenido principal */}
       <main className="dashboard-main">
 
         <header className="dashboard-header">
+
           <div>
             <h1>{seccion}</h1>
             <p>Bienvenido al sistema de gestión HUMANI.</p>
@@ -76,58 +82,106 @@ function Dashboard() {
             <span>Administrador</span>
             <div className="header-avatar">A</div>
           </div>
+
         </header>
 
         <section className="dashboard-content">
 
-          <div className="welcome-banner">
-            <div>
-              <span className="welcome-tag">PANEL DE CONTROL</span>
-              <h2>Bienvenido a HUMANI</h2>
-              <p>
-                Administra y consulta la información de tu negocio
-                desde un solo lugar.
-              </p>
-            </div>
-            <div className="welcome-symbol">H</div>
-          </div>
+          {seccion === 'Productos' ? (
+            <Productos />
+          ) : seccion === 'Inicio' ? (
+            <>
+              <div className="welcome-banner">
 
-          <div className="section-heading">
-            <h2>Resumen general</h2>
-            <span>Información del sistema</span>
-          </div>
-
-          <div className="statistics-grid">
-            {estadisticas.map((dato) => (
-              <div className="stat-card" key={dato.titulo}>
-                <div className="stat-icon">{dato.icono}</div>
                 <div>
-                  <p>{dato.titulo}</p>
-                  <h3>{dato.valor}</h3>
+                  <span className="welcome-tag">
+                    PANEL DE CONTROL
+                  </span>
+
+                  <h2>Bienvenido a HUMANI</h2>
+
+                  <p>
+                    Administra y consulta la información de tu negocio
+                    desde un solo lugar.
+                  </p>
                 </div>
+
+                <div className="welcome-symbol">H</div>
+
               </div>
-            ))}
-          </div>
 
-          <div className="section-heading">
-            <h2>Módulos del sistema</h2>
-            <span>Acceso rápido</span>
-          </div>
+              <div className="section-heading">
+                <h2>Resumen general</h2>
+                <span>Información del sistema</span>
+              </div>
 
-          <div className="modules-grid">
-            {modulos.slice(1).map((modulo) => (
-              <button
-                className="module-card"
-                key={modulo.nombre}
-                onClick={() => setSeccion(modulo.nombre)}
-              >
-                <span className="module-icon">{modulo.icono}</span>
-                <h3>{modulo.nombre}</h3>
-                <p>Consultar y administrar información</p>
-                <span className="module-link">Ingresar →</span>
-              </button>
-            ))}
-          </div>
+              <div className="statistics-grid">
+
+                {estadisticas.map((dato) => (
+                  <div className="stat-card" key={dato.titulo}>
+
+                    <div className="stat-icon">
+                      {dato.icono}
+                    </div>
+
+                    <div>
+                      <p>{dato.titulo}</p>
+                      <h3>{dato.valor}</h3>
+                    </div>
+
+                  </div>
+                ))}
+
+              </div>
+
+              <div className="section-heading">
+                <h2>Módulos del sistema</h2>
+                <span>Acceso rápido</span>
+              </div>
+
+              <div className="modules-grid">
+
+                {modulos.slice(1).map((modulo) => (
+                  <button
+                    className="module-card"
+                    key={modulo.nombre}
+                    onClick={() => setSeccion(modulo.nombre)}
+                  >
+                    <span className="module-icon">
+                      {modulo.icono}
+                    </span>
+
+                    <h3>{modulo.nombre}</h3>
+
+                    <p>
+                      Consultar y administrar información
+                    </p>
+
+                    <span className="module-link">
+                      Ingresar →
+                    </span>
+                  </button>
+                ))}
+
+              </div>
+            </>
+          ) : (
+            <div className="welcome-banner">
+              <div>
+                <span className="welcome-tag">
+                  MÓDULO HUMANI
+                </span>
+
+                <h2>{seccion}</h2>
+
+                <p>
+                  Este módulo todavía está pendiente de desarrollo.
+                </p>
+              </div>
+
+              <div className="welcome-symbol">H</div>
+            </div>
+          )}
 
         </section>
 
@@ -136,6 +190,7 @@ function Dashboard() {
         </footer>
 
       </main>
+
     </div>
   );
 }
