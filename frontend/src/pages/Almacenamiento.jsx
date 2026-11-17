@@ -6,7 +6,7 @@ import { obtenerImagenProducto } from '../utils/imagenes';
 const API_PRODUCTOS = 'http://localhost:3000/api/productos';
 const API_ALMACENAMIENTO = 'http://localhost:3000/api/almacenamiento';
 
-function Almacenamiento() {
+function Almacenamiento({ soloLectura = false }) {
   const [productos, setProductos] = useState([]);
   const [ubicaciones, setUbicaciones] = useState([]);
   const [registros, setRegistros] = useState([]);
@@ -55,6 +55,7 @@ function Almacenamiento() {
       setProductos(datosProductos);
       setUbicaciones(datosUbicaciones);
       setRegistros(datosRegistros);
+      setMensaje('');
 
     } catch (error) {
       console.error('Error:', error);
@@ -75,6 +76,8 @@ function Almacenamiento() {
 
   // ABRIR FORMULARIO PARA NUEVO REGISTRO
   const abrirFormulario = () => {
+    if (soloLectura) return;
+
     setEditando(null);
     setFormulario(formularioInicial);
     setMensaje('');
@@ -83,6 +86,8 @@ function Almacenamiento() {
 
   // EDITAR REGISTRO
   const editarRegistro = (registro) => {
+    if (soloLectura) return;
+
     setEditando(registro.id);
 
     setFormulario({
@@ -100,6 +105,9 @@ function Almacenamiento() {
   // GUARDAR O ACTUALIZAR REGISTRO
   const guardarRegistro = async (e) => {
     e.preventDefault();
+
+    if (soloLectura) return;
+
     setMensaje('');
 
     try {
@@ -139,6 +147,8 @@ function Almacenamiento() {
 
   // ELIMINAR REGISTRO
   const eliminarRegistro = async (id) => {
+    if (soloLectura) return;
+
     const confirmar = window.confirm(
       '¿Estás seguro de eliminar esta ubicación del producto?'
     );
@@ -200,16 +210,20 @@ function Almacenamiento() {
         <div>
           <h2>Almacenamiento de productos</h2>
           <p>
-            Consulta y administra dónde se encuentra cada producto.
+            {soloLectura
+              ? 'Consulta dónde se encuentran los productos y sus condiciones de almacenamiento.'
+              : 'Consulta y administra dónde se encuentra cada producto.'}
           </p>
         </div>
 
-        <button
-          className="almacenamiento-boton-principal"
-          onClick={abrirFormulario}
-        >
-          + Asignar ubicación
-        </button>
+        {!soloLectura && (
+          <button
+            className="almacenamiento-boton-principal"
+            onClick={abrirFormulario}
+          >
+            + Asignar ubicación
+          </button>
+        )}
       </div>
 
       {/* MENSAJES */}
@@ -294,25 +308,27 @@ function Almacenamiento() {
                           📍 {registro.ubicacion}
                         </strong>
 
-                        <div className="almacenamiento-acciones">
+                        {!soloLectura && (
+                          <div className="almacenamiento-acciones">
 
-                          <button
-                            type="button"
-                            onClick={() => editarRegistro(registro)}
-                            title="Editar"
-                          >
-                            ✏️
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => editarRegistro(registro)}
+                              title="Editar"
+                            >
+                              ✏️
+                            </button>
 
-                          <button
-                            type="button"
-                            onClick={() => eliminarRegistro(registro.id)}
-                            title="Eliminar"
-                          >
-                            🗑️
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => eliminarRegistro(registro.id)}
+                              title="Eliminar"
+                            >
+                              🗑️
+                            </button>
 
-                        </div>
+                          </div>
+                        )}
 
                       </div>
 
@@ -358,8 +374,8 @@ function Almacenamiento() {
         </div>
       )}
 
-      {/* MODAL */}
-      {modalAbierto && (
+      {/* MODAL: SOLO JEFES Y ADMINISTRADORES */}
+      {!soloLectura && modalAbierto && (
 
         <div className="almacenamiento-modal-fondo">
 

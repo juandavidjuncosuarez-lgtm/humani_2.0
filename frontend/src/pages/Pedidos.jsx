@@ -1,11 +1,12 @@
 
 import { useEffect, useState } from 'react';
+import './Pedidos.css';
 
 const API_PEDIDOS = 'http://localhost:3000/api/pedidos';
 const API_PRODUCTOS = 'http://localhost:3000/api/productos';
 const API_PROVEEDORES = 'http://localhost:3000/api/proveedores';
 
-function Pedidos() {
+function Pedidos({ soloLectura = false }) {
   const [pedidos, setPedidos] = useState([]);
   const [productos, setProductos] = useState([]);
   const [proveedores, setProveedores] = useState([]);
@@ -19,10 +20,6 @@ function Pedidos() {
     producto_id: '',
     cantidad: ''
   });
-
-  // =====================================
-  // CARGAR INFORMACIÓN INICIAL
-  // =====================================
 
   useEffect(() => {
     let activo = true;
@@ -71,10 +68,6 @@ function Pedidos() {
     };
   }, []);
 
-  // =====================================
-  // CARGAR PEDIDOS
-  // =====================================
-
   const cargarPedidos = async () => {
     try {
       const respuesta = await fetch(API_PEDIDOS);
@@ -91,10 +84,6 @@ function Pedidos() {
     }
   };
 
-  // =====================================
-  // MANEJAR CAMBIOS DEL FORMULARIO
-  // =====================================
-
   const manejarCambio = (e) => {
     const { name, value } = e.target;
 
@@ -104,12 +93,10 @@ function Pedidos() {
     }));
   };
 
-  // =====================================
-  // REGISTRAR PEDIDO
-  // =====================================
-
   const guardarPedido = async (e) => {
     e.preventDefault();
+
+    if (soloLectura) return;
 
     if (
       !formulario.proveedor_id ||
@@ -137,7 +124,9 @@ function Pedidos() {
       const resultado = await respuesta.json();
 
       if (!respuesta.ok) {
-        throw new Error(resultado.mensaje || 'Error al registrar el pedido');
+        throw new Error(
+          resultado.mensaje || 'Error al registrar el pedido'
+        );
       }
 
       setFormulario({
@@ -155,11 +144,9 @@ function Pedidos() {
     }
   };
 
-  // =====================================
-  // CAMBIAR ESTADO
-  // =====================================
-
   const cambiarEstado = async (id, estado) => {
+    if (soloLectura) return;
+
     try {
       const respuesta = await fetch(`${API_PEDIDOS}/${id}/estado`, {
         method: 'PUT',
@@ -172,7 +159,9 @@ function Pedidos() {
       const resultado = await respuesta.json();
 
       if (!respuesta.ok) {
-        throw new Error(resultado.mensaje || 'Error al cambiar el estado');
+        throw new Error(
+          resultado.mensaje || 'Error al cambiar el estado'
+        );
       }
 
       setMensaje('Estado actualizado correctamente');
@@ -182,11 +171,9 @@ function Pedidos() {
     }
   };
 
-  // =====================================
-  // ELIMINAR PEDIDO
-  // =====================================
-
   const eliminarPedido = async (id) => {
+    if (soloLectura) return;
+
     const confirmar = window.confirm(
       '¿Estás seguro de eliminar este pedido?'
     );
@@ -201,7 +188,9 @@ function Pedidos() {
       const resultado = await respuesta.json();
 
       if (!respuesta.ok) {
-        throw new Error(resultado.mensaje || 'Error al eliminar el pedido');
+        throw new Error(
+          resultado.mensaje || 'Error al eliminar el pedido'
+        );
       }
 
       setMensaje('Pedido eliminado correctamente');
@@ -211,10 +200,6 @@ function Pedidos() {
     }
   };
 
-  // =====================================
-  // FORMATO DE DINERO
-  // =====================================
-
   const formatoPrecio = (valor) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -223,28 +208,42 @@ function Pedidos() {
     }).format(Number(valor) || 0);
   };
 
-  // =====================================
-  // RESUMEN DE PEDIDOS
-  // =====================================
+  const formatoFecha = (fecha) => {
+    if (!fecha) return 'Sin fecha';
 
-  const enProceso = pedidos.filter(
-    (pedido) => pedido.estado === 'En proceso'
+    const fechaPedido = new Date(fecha);
+
+    if (Number.isNaN(fechaPedido.getTime())) {
+      return 'Fecha no disponible';
+    }
+
+    return fechaPedido.toLocaleDateString('es-CO');
+  };
+
+  const obtenerClaseEstado = (estado) => {
+    if (estado === 'Entregado') return 'estado-entregado';
+    if (estado === 'Cancelado') return 'estado-cancelado';
+    return 'estado-proceso';
+  };
+
+  const pendientes = pedidos.filter(
+    (pedido) => pedido.estado === 'Pendiente'
   ).length;
 
   const entregados = pedidos.filter(
-    (pedido) => pedido.estado === 'Entregado a la tienda'
+    (pedido) => pedido.estado === 'Entregado'
   ).length;
 
   const cancelados = pedidos.filter(
     (pedido) => pedido.estado === 'Cancelado'
   ).length;
 
-  // =====================================
-  // INTERFAZ
-  // =====================================
-
   if (cargando) {
-    return <div className="pedidos-contenedor">Cargando pedidos...</div>;
+    return (
+      <div className="pedidos-contenedor">
+        Cargando pedidos...
+      </div>
+    );
   }
 
   return (
@@ -253,18 +252,24 @@ function Pedidos() {
       <div className="pedidos-encabezado">
         <div>
           <h2>Gestión de pedidos</h2>
-          <p>Administra las solicitudes de productos a proveedores.</p>
+          <p>
+            {soloLectura
+              ? 'Consulta los pedidos realizados a los proveedores.'
+              : 'Administra las solicitudes de productos a proveedores.'}
+          </p>
         </div>
 
-        <button
-          className="pedidos-boton-crear"
-          onClick={() => {
-            setMensaje('');
-            setMostrarFormulario(!mostrarFormulario);
-          }}
-        >
-          {mostrarFormulario ? 'Cerrar formulario' : '+ Crear pedido'}
-        </button>
+        {!soloLectura && (
+          <button
+            className="pedidos-boton-crear"
+            onClick={() => {
+              setMensaje('');
+              setMostrarFormulario(!mostrarFormulario);
+            }}
+          >
+            {mostrarFormulario ? 'Cerrar formulario' : '+ Crear pedido'}
+          </button>
+        )}
       </div>
 
       {mensaje && (
@@ -274,15 +279,14 @@ function Pedidos() {
       )}
 
       <div className="pedidos-resumen">
-
         <div className="pedido-resumen-card">
           <span>Total de pedidos</span>
           <strong>{pedidos.length}</strong>
         </div>
 
         <div className="pedido-resumen-card">
-          <span>En proceso</span>
-          <strong>{enProceso}</strong>
+          <span>Pendientes</span>
+          <strong>{pendientes}</strong>
         </div>
 
         <div className="pedido-resumen-card">
@@ -294,12 +298,13 @@ function Pedidos() {
           <span>Cancelados</span>
           <strong>{cancelados}</strong>
         </div>
-
       </div>
 
-      {mostrarFormulario && (
-        <form className="pedidos-formulario" onSubmit={guardarPedido}>
-
+      {!soloLectura && mostrarFormulario && (
+        <form
+          className="pedidos-formulario"
+          onSubmit={guardarPedido}
+        >
           <h3>Registrar nuevo pedido</h3>
 
           <div className="pedidos-campos">
@@ -316,7 +321,10 @@ function Pedidos() {
                 <option value="">Seleccionar proveedor</option>
 
                 {proveedores.map((proveedor) => (
-                  <option key={proveedor.id} value={proveedor.id}>
+                  <option
+                    key={proveedor.id}
+                    value={proveedor.id}
+                  >
                     {proveedor.nombre}
                   </option>
                 ))}
@@ -335,7 +343,10 @@ function Pedidos() {
                 <option value="">Seleccionar producto</option>
 
                 {productos.map((producto) => (
-                  <option key={producto.id} value={producto.id}>
+                  <option
+                    key={producto.id}
+                    value={producto.id}
+                  >
                     {producto.nombre}
                   </option>
                 ))}
@@ -358,15 +369,16 @@ function Pedidos() {
 
           </div>
 
-          <button type="submit" className="pedidos-boton-guardar">
+          <button
+            type="submit"
+            className="pedidos-boton-guardar"
+          >
             Guardar pedido
           </button>
-
         </form>
       )}
 
       <div className="pedidos-listado">
-
         <h3>Pedidos registrados</h3>
 
         {pedidos.length === 0 ? (
@@ -375,83 +387,97 @@ function Pedidos() {
             <p>Cuando registres un pedido, aparecerá aquí.</p>
           </div>
         ) : (
+          <div className="pedidos-tarjetas">
 
-          <div className="pedidos-tabla-contenedor">
-            <table className="pedidos-tabla">
+            {pedidos.map((pedido) => (
+              <article className="pedido-card" key={pedido.id}>
 
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Proveedor</th>
-                  <th>Producto</th>
-                  <th>Cantidad</th>
-                  <th>Precio unitario</th>
-                  <th>Fecha</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
+                <div className="pedido-card-encabezado">
+                  <div>
+                    <span className="pedido-numero">
+                      PEDIDO #{pedido.id}
+                    </span>
+                    <h4>{pedido.producto || 'Producto no disponible'}</h4>
+                  </div>
 
-              <tbody>
-                {pedidos.map((pedido) => (
-                  <tr key={pedido.id}>
+                  <span
+                    className={`pedido-estado ${obtenerClaseEstado(
+                      pedido.estado
+                    )}`}
+                  >
+                    {pedido.estado || 'Pendiente'}
+                  </span>
+                </div>
 
-                    <td>#{pedido.id}</td>
+                <div className="pedido-card-informacion">
 
-                    <td>{pedido.proveedor}</td>
+                  <div className="pedido-detalle">
+                    <span>Proveedor</span>
+                    <strong>
+                      {pedido.proveedor || 'No disponible'}
+                    </strong>
+                  </div>
 
-                    <td>{pedido.producto}</td>
+                  <div className="pedido-detalle">
+                    <span>Producto</span>
+                    <strong>
+                      {pedido.producto || 'No disponible'}
+                    </strong>
+                  </div>
 
-                    <td>{pedido.cantidad}</td>
+                  <div className="pedido-detalle">
+                    <span>Cantidad solicitada</span>
+                    <strong>{pedido.cantidad}</strong>
+                  </div>
 
-                    <td>{formatoPrecio(pedido.precio_unitario)}</td>
+                  <div className="pedido-detalle">
+                    <span>Precio unitario</span>
+                    <strong>
+                      {formatoPrecio(pedido.precio_unitario)}
+                    </strong>
+                  </div>
 
-                    <td>
-                      {pedido.fecha
-                        ? new Date(pedido.fecha).toLocaleDateString('es-CO')
-                        : 'Sin fecha'}
-                    </td>
+                  <div className="pedido-detalle">
+                    <span>Fecha del pedido</span>
+                    <strong>{formatoFecha(pedido.fecha)}</strong>
+                  </div>
 
-                    <td>
+                </div>
+
+                {!soloLectura && (
+                  <div className="pedido-card-acciones">
+                    <div className="pedido-cambiar-estado">
+                      <label>Actualizar estado</label>
+
                       <select
-                        className={`pedido-estado ${
-                          pedido.estado === 'Entregado a la tienda'
-                            ? 'estado-entregado'
-                            : pedido.estado === 'Cancelado'
-                            ? 'estado-cancelado'
-                            : 'estado-proceso'
-                        }`}
-                        value={pedido.estado || 'En proceso'}
+                        className={`pedido-estado-select ${obtenerClaseEstado(
+                          pedido.estado
+                        )}`}
+                        value={pedido.estado || 'Pendiente'}
                         onChange={(e) =>
                           cambiarEstado(pedido.id, e.target.value)
                         }
                       >
-                        <option value="En proceso">En proceso</option>
-                        <option value="Entregado a la tienda">
-                          Entregado a la tienda
-                        </option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Entregado">Entregado</option>
                         <option value="Cancelado">Cancelado</option>
                       </select>
-                    </td>
+                    </div>
 
-                    <td>
-                      <button
-                        className="pedido-boton-eliminar"
-                        onClick={() => eliminarPedido(pedido.id)}
-                      >
-                        Eliminar
-                      </button>
-                    </td>
+                    <button
+                      className="pedido-boton-eliminar"
+                      onClick={() => eliminarPedido(pedido.id)}
+                    >
+                      Eliminar pedido
+                    </button>
+                  </div>
+                )}
 
-                  </tr>
-                ))}
-              </tbody>
+              </article>
+            ))}
 
-            </table>
           </div>
-
         )}
-
       </div>
 
     </div>

@@ -4,8 +4,7 @@ import './Productos.css';
 
 const API_URL = 'http://localhost:3000/api/productos';
 
-function Productos() {
-  // ESTADOS
+function Productos({ soloLectura = false }) {
   const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -15,7 +14,6 @@ function Productos() {
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
 
-  // VALORES INICIALES DEL FORMULARIO
   const formularioInicial = {
     nombre: '',
     categoria: '',
@@ -33,18 +31,13 @@ function Productos() {
     const cantidad = Number(producto.cantidad);
     const minimo = Number(producto.stock_minimo);
 
-    if (cantidad === 0) {
-      return 'agotado';
-    }
-
-    if (cantidad <= minimo) {
-      return 'por-agotarse';
-    }
+    if (cantidad === 0) return 'agotado';
+    if (cantidad <= minimo) return 'por-agotarse';
 
     return 'normal';
   };
 
-  // CONSULTAR PRODUCTOS DESDE MYSQL
+  // CONSULTAR PRODUCTOS
   const cargarProductos = async () => {
     try {
       setCargando(true);
@@ -75,7 +68,6 @@ function Productos() {
     }
   };
 
-  // CARGAR PRODUCTOS AL ABRIR EL MÓDULO
   useEffect(() => {
     const temporizador = setTimeout(() => {
       cargarProductos();
@@ -84,7 +76,7 @@ function Productos() {
     return () => clearTimeout(temporizador);
   }, []);
 
-  // CAPTURAR LOS DATOS DE LOS CAMPOS
+  // CAPTURAR DATOS DEL FORMULARIO
   const cambiarCampo = (e) => {
     const { name, value } = e.target;
 
@@ -94,9 +86,14 @@ function Productos() {
     }));
   };
 
-  // GUARDAR O ACTUALIZAR PRODUCTO EN MYSQL
+  // GUARDAR O ACTUALIZAR PRODUCTO
   const guardarProducto = async (e) => {
     e.preventDefault();
+
+    if (soloLectura) {
+      setError('No tienes permisos para modificar productos.');
+      return;
+    }
 
     try {
       setGuardando(true);
@@ -113,10 +110,9 @@ function Productos() {
         precio: Number(formulario.precio),
       };
 
-      const url =
-        editando !== null
-          ? `${API_URL}/${editando}`
-          : API_URL;
+      const url = editando !== null
+        ? `${API_URL}/${editando}`
+        : API_URL;
 
       const metodo = editando !== null ? 'PUT' : 'POST';
 
@@ -138,7 +134,6 @@ function Productos() {
 
       setMensaje(resultado.mensaje);
       cancelarFormulario();
-
       await cargarProductos();
 
     } catch (error) {
@@ -151,6 +146,8 @@ function Productos() {
 
   // PREPARAR FORMULARIO PARA EDITAR
   const editarProducto = (producto) => {
+    if (soloLectura) return;
+
     setFormulario({
       nombre: producto.nombre || '',
       categoria: producto.categoria || '',
@@ -167,8 +164,10 @@ function Productos() {
     setError('');
   };
 
-  // ELIMINAR PRODUCTO DE MYSQL
+  // ELIMINAR PRODUCTO
   const eliminarProducto = async (id) => {
+    if (soloLectura) return;
+
     if (!window.confirm('¿Estás seguro de eliminar este producto?')) {
       return;
     }
@@ -198,19 +197,19 @@ function Productos() {
     }
   };
 
-  // LIMPIAR Y CERRAR FORMULARIO
+  // CERRAR FORMULARIO
   const cancelarFormulario = () => {
     setFormulario(formularioInicial);
     setEditando(null);
     setMostrarFormulario(false);
   };
 
-  // BUSCAR PRODUCTOS POR NOMBRE
+  // BUSCAR PRODUCTOS
   const productosFiltrados = productos.filter((producto) =>
-    producto.nombre.toLowerCase().includes(busqueda.toLowerCase())
+    (producto.nombre || '').toLowerCase().includes(busqueda.toLowerCase())
   );
 
-  // FORMATO DE PRECIOS COLOMBIANOS
+  // FORMATO DE PRECIOS
   const formatoPrecio = (precio) =>
     Number(precio).toLocaleString('es-CO', {
       style: 'currency',
@@ -239,28 +238,34 @@ function Productos() {
       <div className="productos-header">
         <div>
           <h2>Inventario de productos</h2>
-          <p>Consulta y administra los productos de HUMANI.</p>
+          <p>
+            {soloLectura
+              ? 'Consulta los productos y el estado del inventario.'
+              : 'Consulta y administra los productos de HUMANI.'}
+          </p>
         </div>
 
-        <button
-          className="producto-btn guardar"
-          onClick={() => {
-            setFormulario(formularioInicial);
-            setEditando(null);
-            setMostrarFormulario(true);
-            setMensaje('');
-            setError('');
-          }}
-        >
-          + Nuevo producto
-        </button>
+        {!soloLectura && (
+          <button
+            className="producto-btn guardar"
+            onClick={() => {
+              setFormulario(formularioInicial);
+              setEditando(null);
+              setMostrarFormulario(true);
+              setMensaje('');
+              setError('');
+            }}
+          >
+            + Nuevo producto
+          </button>
+        )}
       </div>
 
       {/* MENSAJES */}
       {mensaje && <p className="mensaje-exito">{mensaje}</p>}
       {error && <p className="mensaje-error">{error}</p>}
 
-      {/* RESUMEN DEL INVENTARIO */}
+      {/* RESUMEN */}
       <div className="productos-resumen">
 
         <div className="producto-resumen-card">
@@ -289,8 +294,8 @@ function Productos() {
 
       </div>
 
-      {/* FORMULARIO */}
-      {mostrarFormulario && (
+      {/* FORMULARIO SOLO PARA JEFES Y ADMINISTRADORES */}
+      {!soloLectura && mostrarFormulario && (
         <form
           className="producto-formulario"
           onSubmit={guardarProducto}
@@ -342,7 +347,6 @@ function Productos() {
                 step="1"
                 value={formulario.cantidad}
                 onChange={cambiarCampo}
-                placeholder="Cantidad disponible"
                 required
               />
             </div>
@@ -356,10 +360,11 @@ function Productos() {
                 step="1"
                 value={formulario.stock_minimo}
                 onChange={cambiarCampo}
-                placeholder="Ej. 10"
                 required
               />
-              <small>Se generará una alerta al llegar a este límite.</small>
+              <small>
+                Se generará una alerta al llegar a este límite.
+              </small>
             </div>
 
             <div>
@@ -371,7 +376,6 @@ function Productos() {
                 step="1"
                 value={formulario.precio}
                 onChange={cambiarCampo}
-                placeholder="Ej. 3500"
                 required
               />
             </div>
@@ -404,7 +408,6 @@ function Productos() {
 
           </div>
 
-          {/* BOTONES */}
           <div className="producto-form-actions">
 
             <button
@@ -432,7 +435,7 @@ function Productos() {
         </form>
       )}
 
-      {/* TABLA DE PRODUCTOS */}
+      {/* TABLA */}
       <div className="productos-tabla-contenedor">
 
         <div className="productos-busqueda">
@@ -457,7 +460,7 @@ function Productos() {
                 <th>Estado</th>
                 <th>Almacenamiento</th>
                 <th>Precio</th>
-                <th>Acciones</th>
+                {!soloLectura && <th>Acciones</th>}
               </tr>
             </thead>
 
@@ -465,7 +468,7 @@ function Productos() {
 
               {cargando ? (
                 <tr>
-                  <td colSpan="8" className="sin-productos">
+                  <td colSpan={soloLectura ? 7 : 8} className="sin-productos">
                     Cargando productos...
                   </td>
                 </tr>
@@ -497,34 +500,39 @@ function Productos() {
 
                       <td>{formatoPrecio(producto.precio)}</td>
 
-                      <td>
-                        <div className="producto-acciones">
+                      {!soloLectura && (
+                        <td>
+                          <div className="producto-acciones">
 
-                          <button
-                            type="button"
-                            className="producto-btn actualizar"
-                            onClick={() => editarProducto(producto)}
-                          >
-                            Editar
-                          </button>
+                            <button
+                              type="button"
+                              className="producto-btn actualizar"
+                              onClick={() => editarProducto(producto)}
+                            >
+                              Editar
+                            </button>
 
-                          <button
-                            type="button"
-                            className="producto-btn eliminar"
-                            onClick={() => eliminarProducto(producto.id)}
-                          >
-                            Eliminar
-                          </button>
+                            <button
+                              type="button"
+                              className="producto-btn eliminar"
+                              onClick={() => eliminarProducto(producto.id)}
+                            >
+                              Eliminar
+                            </button>
 
-                        </div>
-                      </td>
+                          </div>
+                        </td>
+                      )}
 
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan="8" className="sin-productos">
+                  <td
+                    colSpan={soloLectura ? 7 : 8}
+                    className="sin-productos"
+                  >
                     {error
                       ? 'No fue posible cargar los productos.'
                       : 'No se encontraron productos.'}

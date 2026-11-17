@@ -6,17 +6,32 @@ import Productos from './Productos';
 import Almacenamiento from './Almacenamiento';
 import Proveedores from './Proveedores';
 import Pedidos from './Pedidos';
+import Ventas from './Ventas';
+import Usuarios from './Usuarios';
 
-function Dashboard() {
+function Dashboard({ usuario, token, onCerrarSesion }) {
   const [seccion, setSeccion] = useState('Inicio');
 
-  // MODULOS PRINCIPALES
+  // IDENTIFICAR EL ROL DEL USUARIO
+  const rol = usuario?.rol || 'Empleado';
+
+  const esEmpleado = rol === 'Empleado';
+  const esJefe = rol === 'Jefe';
+  const esAdministrador = rol === 'Administrador';
+
+  // MODULOS DISPONIBLES SEGUN EL ROL
   const modulos = [
     { nombre: 'Inicio', icono: '⌂' },
     { nombre: 'Productos', icono: '▣' },
     { nombre: 'Almacenamiento', icono: '▤' },
     { nombre: 'Pedidos', icono: '▧' },
     { nombre: 'Proveedores', icono: '♧' },
+    { nombre: 'Ventas', icono: '$' },
+
+    // SOLO JEFES Y ADMINISTRADORES
+    ...(!esEmpleado
+      ? [{ nombre: 'Usuarios', icono: '♙' }]
+      : [])
   ];
 
   // RESUMEN GENERAL
@@ -25,6 +40,30 @@ function Dashboard() {
     { titulo: 'Pedidos', valor: '0', icono: '▧' },
     { titulo: 'Proveedores', valor: '0', icono: '♧' },
   ];
+
+  const nombreUsuario =
+    usuario?.nombre || usuario?.usuario || 'Usuario';
+
+  const inicial = nombreUsuario.charAt(0).toUpperCase();
+
+  const descripcionRol = esAdministrador
+    ? 'Administrador del sistema'
+    : esJefe
+    ? 'Jefe del sistema'
+    : 'Empleado';
+
+  // CAMBIAR DE SECCION
+  const cambiarSeccion = (nombre) => {
+    const tieneAcceso = modulos.some(
+      (modulo) => modulo.nombre === nombre
+    );
+
+    if (tieneAcceso) {
+      setSeccion(nombre);
+    } else {
+      setSeccion('Inicio');
+    }
+  };
 
   return (
     <div className="dashboard-container">
@@ -51,9 +90,12 @@ function Dashboard() {
                 className={`menu-item ${
                   seccion === modulo.nombre ? 'active' : ''
                 }`}
-                onClick={() => setSeccion(modulo.nombre)}
+                onClick={() => cambiarSeccion(modulo.nombre)}
               >
-                <span className="menu-icon">{modulo.icono}</span>
+                <span className="menu-icon">
+                  {modulo.icono}
+                </span>
+
                 {modulo.nombre}
               </button>
             ))}
@@ -61,14 +103,24 @@ function Dashboard() {
         </div>
 
         <div className="sidebar-bottom">
+
           <div className="user-profile">
-            <div className="user-avatar">A</div>
+            <div className="user-avatar">{inicial}</div>
 
             <div>
-              <strong>Administrador</strong>
-              <span>Jefe del sistema</span>
+              <strong>{nombreUsuario}</strong>
+              <span>{descripcionRol}</span>
             </div>
           </div>
+
+          <button
+            className="menu-item"
+            onClick={onCerrarSesion}
+          >
+            <span className="menu-icon">↪</span>
+            Cerrar sesión
+          </button>
+
         </div>
 
       </aside>
@@ -84,34 +136,43 @@ function Dashboard() {
           </div>
 
           <div className="header-user">
-            <span>Administrador</span>
-            <div className="header-avatar">A</div>
+            <span>{nombreUsuario}</span>
+            <div className="header-avatar">{inicial}</div>
           </div>
 
         </header>
 
         <section className="dashboard-content">
 
-          {/* PRODUCTOS */}
+          {/* MODULO PRODUCTOS */}
           {seccion === 'Productos' ? (
 
-            <Productos />
+            <Productos soloLectura={esEmpleado} />
 
           ) : seccion === 'Almacenamiento' ? (
 
-            <Almacenamiento />
+            <Almacenamiento soloLectura={esEmpleado} />
 
           ) : seccion === 'Proveedores' ? (
 
-            <Proveedores />
+            <Proveedores soloLectura={esEmpleado} />
 
           ) : seccion === 'Pedidos' ? (
 
-            <Pedidos />
+            <Pedidos soloLectura={esEmpleado} />
+
+          ) : seccion === 'Ventas' ? (
+
+            <Ventas />
+
+          ) : seccion === 'Usuarios' && !esEmpleado ? (
+
+            <Usuarios token={token} />
 
           ) : seccion === 'Inicio' ? (
 
             <>
+
               <div className="welcome-banner">
 
                 <div>
@@ -122,8 +183,9 @@ function Dashboard() {
                   <h2>Bienvenido a HUMANI</h2>
 
                   <p>
-                    Administra y consulta la información de tu negocio
-                    desde un solo lugar.
+                    {esEmpleado
+                      ? 'Consulta productos, almacenamiento, pedidos y proveedores. También puedes registrar y consultar ventas.'
+                      : 'Administra y consulta la información de tu negocio desde un solo lugar.'}
                   </p>
                 </div>
 
@@ -157,7 +219,7 @@ function Dashboard() {
 
               <div className="section-heading">
                 <h2>Módulos del sistema</h2>
-                <span>Acceso rápido</span>
+                <span>Acceso según tu rol</span>
               </div>
 
               <div className="modules-grid">
@@ -165,11 +227,13 @@ function Dashboard() {
                 {modulos
                   .filter((modulo) => modulo.nombre !== 'Inicio')
                   .map((modulo) => (
+
                     <button
                       className="module-card"
                       key={modulo.nombre}
-                      onClick={() => setSeccion(modulo.nombre)}
+                      onClick={() => cambiarSeccion(modulo.nombre)}
                     >
+
                       <span className="module-icon">
                         {modulo.icono}
                       </span>
@@ -177,16 +241,25 @@ function Dashboard() {
                       <h3>{modulo.nombre}</h3>
 
                       <p>
-                        Consultar y administrar información
+                        {esEmpleado
+                          ? modulo.nombre === 'Ventas'
+                            ? 'Registrar ventas y consultar el historial'
+                            : 'Consultar información del módulo'
+                          : modulo.nombre === 'Usuarios'
+                          ? 'Crear cuentas y consultar usuarios registrados'
+                          : 'Consultar y administrar información'}
                       </p>
 
                       <span className="module-link">
                         Ingresar →
                       </span>
+
                     </button>
+
                   ))}
 
               </div>
+
             </>
 
           ) : (
@@ -201,9 +274,7 @@ function Dashboard() {
                 <h2>{seccion}</h2>
 
                 <p>
-                  Este módulo está pendiente de desarrollo.
-                  Próximamente podrás consultar y administrar
-                  toda su información desde aquí.
+                  Este módulo no está disponible.
                 </p>
 
                 <button

@@ -1,0 +1,309 @@
+
+/* =====================================
+   CONTENEDOR PRINCIPAL
+===================================== */
+
+.usuarios-container {
+  width: 100%;
+  color: #ffffff;
+}
+
+/* =====================================
+   ENCABEZADO
+===================================== */
+
+.usuarios-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.usuarios-encabezado h2 {
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+.usuarios-encabezado p,
+.usuarios-tabla-encabezado p,
+.usuarios-formulario-titulo p {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* =====================================
+   BOTONES
+===================================== */
+
+.usuarios-boton-crear,
+.usuarios-boton-guardar {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 9px;
+  padding: 12px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.usuarios-boton-crear:hover,
+.usuarios-boton-guardar:hover {
+  background: #1d4ed8;
+}
+
+.usuarios-boton-cancelar {
+  background: #263449;
+  color: white;
+  border: none;
+  border-radius: 9px;
+  padding: 12px 18px;
+  cursor: pointer;
+}
+
+.usuarios-boton-cancelar:hover {
+  background: #334155;
+}
+
+.usuarios-boton-guardar:disabled,
+.usuarios-boton-cancelar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =====================================
+   MENSAJES
+===================================== */
+
+.usuarios-mensaje {
+  padding: 14px 16px;
+  border-radius: 9px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.usuarios-mensaje.exito {
+  background: #123b2d;
+  border: 1px solid #15803d;
+  color: #86efac;
+}
+
+.usuarios-mensaje.error {
+  background: #451f29;
+  border: 1px solid #be123c;
+  color: #fda4af;
+}
+
+/* =====================================
+   FORMULARIO
+===================================== */
+
+.usuarios-formulario {
+  background: #101c2e;
+  border: 1px solid #263449;
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 28px;
+}
+
+.usuarios-formulario-titulo {
+  margin-bottom: 22px;
+}
+
+.usuarios-formulario-titulo h3 {
+  margin-bottom: 8px;
+  font-size: 19px;
+}
+
+.usuarios-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.usuarios-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.usuarios-campo label {
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.usuarios-campo input,
+.usuarios-campo select {
+  width: 100%;
+  box-sizing: border-box;
+  background: #0b1525;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px;
+  color: white;
+  outline: none;
+  font-size: 14px;
+}
+
+.usuarios-campo input:focus,
+.usuarios-campo select:focus {
+  border-color: #3b82f6;
+}
+
+.usuarios-campo input::placeholder {
+  color: #64748b;
+}
+
+.usuarios-campo select option {
+  background: #0b1525;
+  color: white;
+}
+
+.usuarios-formulario-acciones {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* =====================================
+   TABLA DE USUARIOS
+===================================== */
+
+.usuarios-tabla-contenedor {
+  background: #101c2e;
+  border: 1px solid #263449;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.usuarios-tabla-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 22px;
+}
+
+.usuarios-tabla-encabezado h3 {
+  font-size: 19px;
+  margin-bottom: 7px;
+}
+
+.usuarios-total {
+  background: #1e3a5f;
+  color: #93c5fd;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.usuarios-tabla-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.usuarios-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.usuarios-tabla thead {
+  background: #17263b;
+}
+
+.usuarios-tabla th {
+  color: #94a3b8;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.usuarios-tabla th,
+.usuarios-tabla td {
+  padding: 17px 22px;
+  border-bottom: 1px solid #263449;
+}
+
+.usuarios-tabla td {
+  color: #e2e8f0;
+  font-size: 14px;
+}
+
+.usuarios-tabla tbody tr:hover {
+  background: #17263b;
+}
+
+.usuarios-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* =====================================
+   ROLES
+===================================== */
+
+.usuarios-rol {
+  display: inline-block;
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.usuarios-rol.administrador {
+  background: #3b1d50;
+  color: #d8b4fe;
+}
+
+.usuarios-rol.jefe {
+  background: #173c57;
+  color: #7dd3fc;
+}
+
+.usuarios-rol.empleado {
+  background: #17432f;
+  color: #86efac;
+}
+
+/* =====================================
+   ESTADOS
+===================================== */
+
+.usuarios-estado {
+  text-align: center;
+  color: #94a3b8;
+  padding: 35px 20px;
+}
+
+/* =====================================
+   DISEÑO RESPONSIVE
+===================================== */
+
+@media (max-width: 700px) {
+  .usuarios-encabezado {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .usuarios-campos {
+    grid-template-columns: 1fr;
+  }
+
+  .usuarios-formulario-acciones {
+    flex-direction: column;
+  }
+
+  .usuarios-boton-crear,
+  .usuarios-boton-guardar,
+  .usuarios-boton-cancelar {
+    width: 100%;
+  }
+
+  .usuarios-tabla-encabezado {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -1,13 +1,10 @@
 
 import { useEffect, useState } from 'react';
+import './Proveedores.css';
 
 const API_URL = 'http://localhost:3000/api/proveedores';
 
-function Proveedores() {
-  // =====================================
-  // ESTADOS
-  // =====================================
-
+function Proveedores({ soloLectura = false }) {
   const [proveedores, setProveedores] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [mensaje, setMensaje] = useState('');
@@ -21,10 +18,7 @@ function Proveedores() {
     producto: ''
   });
 
-  // =====================================
   // CARGAR PROVEEDORES
-  // =====================================
-
   const cargarProveedores = async () => {
     try {
       const respuesta = await fetch(API_URL);
@@ -35,20 +29,16 @@ function Proveedores() {
 
       const datos = await respuesta.json();
       setProveedores(datos);
-
+      setMensaje('');
     } catch (error) {
       console.error(error);
       setMensaje(error.message);
-
     } finally {
       setCargando(false);
     }
   };
 
-  // =====================================
   // CARGA INICIAL
-  // =====================================
-
   useEffect(() => {
     let activo = true;
 
@@ -66,12 +56,10 @@ function Proveedores() {
           setProveedores(datos);
           setMensaje('');
         }
-
       } catch (error) {
         if (activo) {
           setMensaje(error.message);
         }
-
       } finally {
         if (activo) {
           setCargando(false);
@@ -86,10 +74,7 @@ function Proveedores() {
     };
   }, []);
 
-  // =====================================
   // CONTROLAR FORMULARIO
-  // =====================================
-
   const manejarCambio = (e) => {
     const { name, value } = e.target;
 
@@ -99,11 +84,10 @@ function Proveedores() {
     }));
   };
 
-  // =====================================
   // ABRIR FORMULARIO
-  // =====================================
-
   const abrirFormulario = () => {
+    if (soloLectura) return;
+
     setEditando(null);
 
     setFormulario({
@@ -117,12 +101,11 @@ function Proveedores() {
     setMensaje('');
   };
 
-  // =====================================
   // GUARDAR PROVEEDOR
-  // =====================================
-
   const guardarProveedor = async (e) => {
     e.preventDefault();
+
+    if (soloLectura) return;
 
     try {
       const url = editando
@@ -147,21 +130,27 @@ function Proveedores() {
 
       setMostrarFormulario(false);
       setEditando(null);
-      setMensaje(resultado.mensaje);
+
+      setFormulario({
+        nombre: '',
+        telefono: '',
+        correo: '',
+        producto: ''
+      });
+
+      setMensaje(resultado.mensaje || 'Proveedor guardado correctamente');
 
       await cargarProveedores();
-
     } catch (error) {
       console.error(error);
       setMensaje(error.message);
     }
   };
 
-  // =====================================
   // EDITAR PROVEEDOR
-  // =====================================
-
   const editarProveedor = (proveedor) => {
+    if (soloLectura) return;
+
     setEditando(proveedor.id);
 
     setFormulario({
@@ -175,11 +164,10 @@ function Proveedores() {
     setMensaje('');
   };
 
-  // =====================================
   // ELIMINAR PROVEEDOR
-  // =====================================
-
   const eliminarProveedor = async (id) => {
+    if (soloLectura) return;
+
     const confirmar = window.confirm(
       '¿Estás seguro de eliminar este proveedor?'
     );
@@ -199,42 +187,47 @@ function Proveedores() {
         );
       }
 
-      setMensaje(resultado.mensaje);
-      await cargarProveedores();
+      setMensaje(resultado.mensaje || 'Proveedor eliminado correctamente');
 
+      await cargarProveedores();
     } catch (error) {
       console.error(error);
       setMensaje(error.message);
     }
   };
 
-  // =====================================
   // VISTA PRINCIPAL
-  // =====================================
-
   return (
     <div className="proveedores-container">
 
       <div className="proveedores-encabezado">
         <div>
           <h2>Gestión de proveedores</h2>
-          <p>Consulta y administra tus proveedores.</p>
+
+          <p>
+            {soloLectura
+              ? 'Consulta la información de tus proveedores.'
+              : 'Consulta y administra tus proveedores.'}
+          </p>
         </div>
 
-        <button onClick={abrirFormulario}>
-          + Agregar proveedor
-        </button>
+        {!soloLectura && (
+          <button
+            className="proveedores-boton-crear"
+            onClick={abrirFormulario}
+          >
+            + Agregar proveedor
+          </button>
+        )}
       </div>
 
       {mensaje && (
-        <p className="proveedores-mensaje">
+        <div className="proveedores-mensaje">
           {mensaje}
-        </p>
+        </div>
       )}
 
-      {/* FORMULARIO */}
-
-      {mostrarFormulario && (
+      {!soloLectura && mostrarFormulario && (
         <div className="proveedores-formulario">
 
           <h3>
@@ -243,54 +236,70 @@ function Proveedores() {
 
           <form onSubmit={guardarProveedor}>
 
-            <label>Nombre del proveedor</label>
-            <input
-              type="text"
-              name="nombre"
-              value={formulario.nombre}
-              onChange={manejarCambio}
-              placeholder="Nombre del proveedor"
-              required
-            />
+            <div className="proveedores-campos">
 
-            <label>Teléfono</label>
-            <input
-              type="text"
-              name="telefono"
-              value={formulario.telefono}
-              onChange={manejarCambio}
-              placeholder="Número de teléfono"
-              required
-            />
+              <div>
+                <label>Nombre del proveedor</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={formulario.nombre}
+                  onChange={manejarCambio}
+                  placeholder="Nombre del proveedor"
+                  required
+                />
+              </div>
 
-            <label>Correo electrónico</label>
-            <input
-              type="email"
-              name="correo"
-              value={formulario.correo}
-              onChange={manejarCambio}
-              placeholder="Correo electrónico"
-              required
-            />
+              <div>
+                <label>Teléfono</label>
+                <input
+                  type="text"
+                  name="telefono"
+                  value={formulario.telefono}
+                  onChange={manejarCambio}
+                  placeholder="Número de teléfono"
+                  required
+                />
+              </div>
 
-            <label>Producto que suministra</label>
-            <input
-              type="text"
-              name="producto"
-              value={formulario.producto}
-              onChange={manejarCambio}
-              placeholder="Producto que suministra"
-              required
-            />
+              <div>
+                <label>Correo electrónico</label>
+                <input
+                  type="email"
+                  name="correo"
+                  value={formulario.correo}
+                  onChange={manejarCambio}
+                  placeholder="Correo electrónico"
+                  required
+                />
+              </div>
+
+              <div>
+                <label>Producto que suministra</label>
+                <input
+                  type="text"
+                  name="producto"
+                  value={formulario.producto}
+                  onChange={manejarCambio}
+                  placeholder="Producto que suministra"
+                  required
+                />
+              </div>
+
+            </div>
 
             <div className="proveedores-formulario-botones">
 
-              <button type="submit">
+              <button
+                type="submit"
+                className="proveedores-boton-guardar"
+              >
                 {editando ? 'Guardar cambios' : 'Registrar proveedor'}
               </button>
 
               <button
                 type="button"
+                className="proveedores-boton-cancelar"
                 onClick={() => {
                   setMostrarFormulario(false);
                   setEditando(null);
@@ -305,61 +314,99 @@ function Proveedores() {
         </div>
       )}
 
-      {/* LISTA DE PROVEEDORES */}
+      <div className="proveedores-listado">
 
-      {cargando ? (
-        <p>Cargando proveedores...</p>
+        <h3>Proveedores registrados</h3>
 
-      ) : proveedores.length === 0 ? (
-        <p>No hay proveedores registrados.</p>
+        {cargando ? (
+          <div className="proveedores-vacio">
+            Cargando proveedores...
+          </div>
+        ) : proveedores.length === 0 ? (
+          <div className="proveedores-vacio">
+            <h3>No hay proveedores registrados</h3>
+            <p>Cuando registres un proveedor, aparecerá aquí.</p>
+          </div>
+        ) : (
 
-      ) : (
+          <div className="proveedores-lista">
 
-        <div className="proveedores-lista">
+            {proveedores.map((proveedor) => (
+              <article
+                className="proveedor-card"
+                key={proveedor.id}
+              >
 
-          {proveedores.map((proveedor) => (
-            <article
-              className="proveedor-card"
-              key={proveedor.id}
-            >
+                <div className="proveedor-card-encabezado">
 
-              <h3>{proveedor.nombre}</h3>
+                  <div>
+                    <span className="proveedor-identificador">
+                      PROVEEDOR #{proveedor.id}
+                    </span>
 
-              <p>
-                <strong>Teléfono:</strong> {proveedor.telefono}
-              </p>
+                    <h3>{proveedor.nombre}</h3>
+                  </div>
 
-              <p>
-                <strong>Correo:</strong> {proveedor.correo}
-              </p>
+                  <span className="proveedor-etiqueta">
+                    Proveedor
+                  </span>
 
-              <p>
-                <strong>Producto:</strong> {proveedor.producto}
-              </p>
+                </div>
 
-              <div className="proveedor-acciones">
+                <div className="proveedor-informacion">
 
-                <button
-                  type="button"
-                  onClick={() => editarProveedor(proveedor)}
-                >
-                  Editar
-                </button>
+                  <div className="proveedor-detalle">
+                    <span>Teléfono de contacto</span>
+                    <strong>
+                      {proveedor.telefono || 'No disponible'}
+                    </strong>
+                  </div>
 
-                <button
-                  type="button"
-                  onClick={() => eliminarProveedor(proveedor.id)}
-                >
-                  Eliminar
-                </button>
+                  <div className="proveedor-detalle">
+                    <span>Correo electrónico</span>
+                    <strong>
+                      {proveedor.correo || 'No disponible'}
+                    </strong>
+                  </div>
 
-              </div>
+                  <div className="proveedor-detalle proveedor-producto">
+                    <span>Producto que suministra</span>
+                    <strong>
+                      {proveedor.producto || 'No disponible'}
+                    </strong>
+                  </div>
 
-            </article>
-          ))}
+                </div>
 
-        </div>
-      )}
+                {!soloLectura && (
+                  <div className="proveedor-acciones">
+
+                    <button
+                      type="button"
+                      className="proveedor-boton-editar"
+                      onClick={() => editarProveedor(proveedor)}
+                    >
+                      Editar proveedor
+                    </button>
+
+                    <button
+                      type="button"
+                      className="proveedor-boton-eliminar"
+                      onClick={() => eliminarProveedor(proveedor.id)}
+                    >
+                      Eliminar proveedor
+                    </button>
+
+                  </div>
+                )}
+
+              </article>
+            ))}
+
+          </div>
+        )}
+
+      </div>
 
     </div>
   );

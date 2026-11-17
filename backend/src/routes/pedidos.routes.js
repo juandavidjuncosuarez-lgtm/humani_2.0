@@ -49,9 +49,11 @@ router.post('/', async (req, res) => {
     const { proveedor_id, producto_id, cantidad } = req.body;
 
     if (
-      !Number.isInteger(Number(proveedor_id)) ||
-      !Number.isInteger(Number(producto_id)) ||
-      !Number.isInteger(Number(cantidad)) ||
+      !Number.isSafeInteger(Number(proveedor_id)) ||
+      Number(proveedor_id) <= 0 ||
+      !Number.isSafeInteger(Number(producto_id)) ||
+      Number(producto_id) <= 0 ||
+      !Number.isSafeInteger(Number(cantidad)) ||
       Number(cantidad) <= 0
     ) {
       return res.status(400).json({
@@ -66,9 +68,9 @@ router.post('/', async (req, res) => {
     `;
 
     const [resultado] = await db.query(sql, [
-      proveedor_id,
-      producto_id,
-      cantidad
+      Number(proveedor_id),
+      Number(producto_id),
+      Number(cantidad)
     ]);
 
     res.status(201).json({
@@ -89,8 +91,10 @@ router.post('/', async (req, res) => {
 // =====================================
 
 router.put('/:id/estado', async (req, res) => {
+  let conexion;
+
   try {
-    const { id } = req.params;
+    const id = Number(req.params.id);
     const { estado } = req.body;
 
     const estadosPermitidos = [
@@ -99,32 +103,112 @@ router.put('/:id/estado', async (req, res) => {
       'Cancelado'
     ];
 
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      return res.status(400).json({
+        mensaje: 'El ID del pedido no es válido'
+      });
+    }
+
     if (!estadosPermitidos.includes(estado)) {
       return res.status(400).json({
         mensaje: 'El estado seleccionado no es válido'
       });
     }
 
-    const [resultado] = await db.query(
-      'UPDATE pedidos SET estado = ? WHERE id = ?',
-      [estado, id]
+    conexion = await db.getConnection();
+    await conexion.beginTransaction();
+
+    // Buscar y bloquear el pedido
+    const [pedidos] = await conexion.query(
+      `SELECT id, producto_id, cantidad, estado
+       FROM pedidos
+       WHERE id = ?
+       FOR UPDATE`,
+      [id]
     );
 
-    if (resultado.affectedRows === 0) {
+    if (pedidos.length === 0) {
+      await conexion.rollback();
+
       return res.status(404).json({
         mensaje: 'Pedido no encontrado'
       });
     }
 
+    const pedido = pedidos[0];
+
+    // Evitar modificar un pedido que ya fue recibido
+    if (pedido.estado === 'Entregado' && estado !== 'Entregado') {
+      await conexion.rollback();
+
+      return res.status(400).json({
+        mensaje: 'Un pedido entregado no puede volver a otro estado porque sus unidades ya fueron sumadas al inventario'
+      });
+    }
+
+    // Si ya está entregado, no volver a sumar las unidades
+    if (pedido.estado === 'Entregado' && estado === 'Entregado') {
+      await conexion.rollback();
+
+      return res.json({
+        mensaje: 'Este pedido ya fue entregado. El inventario no se modificó nuevamente.'
+      });
+    }
+
+    // Sumar las unidades cuando el pedido se entrega
+    if (estado === 'Entregado') {
+      const [productos] = await conexion.query(
+        `SELECT id
+         FROM productos
+         WHERE id = ?
+         FOR UPDATE`,
+        [pedido.producto_id]
+      );
+
+      if (productos.length === 0) {
+        await conexion.rollback();
+
+        return res.status(404).json({
+          mensaje: 'No se encontró el producto asociado al pedido'
+        });
+      }
+
+      await conexion.query(
+        `UPDATE productos
+         SET cantidad = cantidad + ?
+         WHERE id = ?`,
+        [pedido.cantidad, pedido.producto_id]
+      );
+    }
+
+    // Guardar el nuevo estado
+    await conexion.query(
+      'UPDATE pedidos SET estado = ? WHERE id = ?',
+      [estado, id]
+    );
+
+    await conexion.commit();
+
     res.json({
-      mensaje: 'Estado del pedido actualizado correctamente'
+      mensaje: estado === 'Entregado'
+        ? `Pedido entregado. Se agregaron ${pedido.cantidad} unidades al inventario.`
+        : 'Estado del pedido actualizado correctamente'
     });
+
   } catch (error) {
+    if (conexion) {
+      await conexion.rollback();
+    }
+
     console.error('Error al actualizar pedido:', error);
 
     res.status(500).json({
-      mensaje: 'Error al actualizar el estado'
+      mensaje: 'Error al actualizar el estado del pedido'
     });
+  } finally {
+    if (conexion) {
+      conexion.release();
+    }
   }
 });
 
@@ -134,22 +218,40 @@ router.put('/:id/estado', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = Number(req.params.id);
 
-    const [resultado] = await db.query(
-      'DELETE FROM pedidos WHERE id = ?',
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      return res.status(400).json({
+        mensaje: 'El ID del pedido no es válido'
+      });
+    }
+
+    const [pedidos] = await db.query(
+      'SELECT estado FROM pedidos WHERE id = ?',
       [id]
     );
 
-    if (resultado.affectedRows === 0) {
+    if (pedidos.length === 0) {
       return res.status(404).json({
         mensaje: 'Pedido no encontrado'
       });
     }
 
+    if (pedidos[0].estado === 'Entregado') {
+      return res.status(400).json({
+        mensaje: 'No se puede eliminar un pedido entregado porque sus unidades ya fueron sumadas al inventario'
+      });
+    }
+
+    await db.query(
+      'DELETE FROM pedidos WHERE id = ?',
+      [id]
+    );
+
     res.json({
       mensaje: 'Pedido eliminado correctamente'
     });
+
   } catch (error) {
     console.error('Error al eliminar pedido:', error);
 

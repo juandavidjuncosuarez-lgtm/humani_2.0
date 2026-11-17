@@ -7,10 +7,13 @@ const { exec } = require('child_process');
 // IMPORTAR RUTAS
 // =====================================
 
+const authRoutes = require('./src/routes/auth.routes');
 const productosRoutes = require('./src/routes/productos.routes');
 const almacenamientoRoutes = require('./src/routes/almacenamiento.routes');
 const proveedoresRoutes = require('./src/routes/proveedores.routes');
 const pedidosRoutes = require('./src/routes/pedidos.routes');
+const ventasRoutes = require('./src/routes/ventas.routes');
+const usuariosRoutes = require('./src/routes/usuarios.routes');
 
 // =====================================
 // CONFIGURACIÓN DEL SERVIDOR
@@ -47,28 +50,21 @@ app.get('/api', (req, res) => {
 });
 
 // =====================================
-// MÓDULO PRODUCTOS
+// AUTENTICACIÓN
+// =====================================
+
+app.use('/api/auth', authRoutes);
+
+// =====================================
+// MÓDULOS DEL SISTEMA
 // =====================================
 
 app.use('/api/productos', productosRoutes);
-
-// =====================================
-// MÓDULO ALMACENAMIENTO
-// =====================================
-
 app.use('/api/almacenamiento', almacenamientoRoutes);
-
-// =====================================
-// MÓDULO PROVEEDORES
-// =====================================
-
 app.use('/api/proveedores', proveedoresRoutes);
-
-// =====================================
-// MÓDULO PEDIDOS
-// =====================================
-
 app.use('/api/pedidos', pedidosRoutes);
+app.use('/api/ventas', ventasRoutes);
+app.use('/api/usuarios', usuariosRoutes);
 
 // =====================================
 // INICIAR SERVIDOR

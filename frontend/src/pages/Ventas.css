@@ -1,0 +1,198 @@
+
+.ventas-contenedor {
+  width: 100%;
+  padding: 25px;
+  color: #ffffff;
+}
+
+.ventas-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.ventas-encabezado h1 {
+  font-size: 28px;
+  margin: 0 0 8px;
+  color: #ffffff;
+}
+
+.ventas-encabezado p {
+  color: #b8b2d1;
+  margin: 0;
+}
+
+.ventas-estadisticas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.venta-estadistica {
+  background: #1a0d51;
+  border: 1px solid #392879;
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.venta-estadistica span {
+  color: #c6bfdf;
+  font-size: 14px;
+}
+
+.venta-estadistica strong {
+  color: #ffffff;
+  font-size: 25px;
+}
+
+.ventas-formulario,
+.ventas-historial {
+  background: #1a0d51;
+  border: 1px solid #392879;
+  border-radius: 14px;
+  padding: 25px;
+  margin-bottom: 25px;
+}
+
+.ventas-formulario h2,
+.ventas-historial h2 {
+  color: #ffffff;
+  font-size: 20px;
+  margin: 0 0 22px;
+}
+
+.ventas-formulario form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: end;
+}
+
+.ventas-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.ventas-campo label {
+  color: #e5e0f5;
+  font-size: 14px;
+}
+
+.ventas-campo input,
+.ventas-campo select {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #51418a;
+  border-radius: 9px;
+  background: #100735;
+  color: #ffffff;
+  outline: none;
+  font-size: 14px;
+}
+
+.ventas-campo input:focus,
+.ventas-campo select:focus {
+  border-color: #a78bfa;
+}
+
+.ventas-formulario button {
+  grid-column: 1 / -1;
+  padding: 14px;
+  border: none;
+  border-radius: 9px;
+  background: #7652df;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ventas-formulario button:hover {
+  background: #8968ee;
+}
+
+.ventas-formulario button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ventas-mensaje {
+  padding: 14px;
+  border-radius: 9px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.ventas-mensaje.exito {
+  background: #123d30;
+  color: #a7f3d0;
+  border: 1px solid #247b5c;
+}
+
+.ventas-mensaje.error {
+  background: #4a1824;
+  color: #fecaca;
+  border: 1px solid #a43c50;
+}
+
+.ventas-tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ventas-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.ventas-tabla th,
+.ventas-tabla td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #392879;
+  white-space: nowrap;
+}
+
+.ventas-tabla th {
+  color: #c9baff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ventas-tabla td {
+  color: #e8e4f5;
+  font-size: 14px;
+}
+
+.ventas-tabla tbody tr:hover {
+  background: #25165f;
+}
+
+@media (max-width: 850px) {
+  .ventas-estadisticas {
+    grid-template-columns: 1fr;
+  }
+
+  .ventas-formulario form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .ventas-contenedor {
+    padding: 15px;
+  }
+
+  .ventas-formulario,
+  .ventas-historial {
+    padding: 17px;
+  }
+}
