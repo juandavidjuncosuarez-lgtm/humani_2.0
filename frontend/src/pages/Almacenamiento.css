@@ -1,0 +1,499 @@
+/* =====================================
+   PALETA DE COLORES
+   Negro:       #0d0d0d / #1a1a1a
+   Azul oscuro: #0f1b3d / #16264f
+   Azul claro:  #4a90d9 / #a9c9f0 / #e8f1fb
+   Verde:       #198754 / #146c43
+   Rojo:        #c0392b / #962d22
+===================================== */
+
+/* =====================================
+   CONTENEDOR PRINCIPAL
+===================================== */
+
+.almacenamiento-container {
+  width: 100%;
+  color: #0d0d0d;
+}
+
+/* =====================================
+   ENCABEZADO
+===================================== */
+
+.almacenamiento-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.almacenamiento-encabezado h2 {
+  margin: 0 0 7px;
+  font-size: 24px;
+  color: #0f1b3d;
+}
+
+.almacenamiento-encabezado p {
+  margin: 0;
+  color: #4a5a6a;
+  font-size: 14px;
+}
+
+/* =====================================
+   BOTONES PRINCIPALES (VERDE = CREAR/GUARDAR)
+===================================== */
+
+.almacenamiento-boton-principal {
+  background: #198754;
+  color: #ffffff;
+  border: 1px solid #0d0d0d;
+  padding: 11px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 3px 0 #0d0d0d;
+}
+
+.almacenamiento-boton-principal:hover {
+  background: #146c43;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 #0d0d0d;
+}
+
+.almacenamiento-boton-principal:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #0d0d0d;
+}
+
+.almacenamiento-boton-principal:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =====================================
+   MENSAJES (AZUL CLARO)
+===================================== */
+
+.almacenamiento-mensaje {
+  background: #e8f1fb;
+  color: #0f1b3d;
+  border-left: 4px solid #4a90d9;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* =====================================
+   TARJETAS DE RESUMEN (AZUL OSCURO)
+===================================== */
+
+.almacenamiento-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.almacenamiento-resumen-card {
+  background: #0f1b3d;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #0d0d0d;
+  box-shadow: 0 4px 0 #0d0d0d;
+}
+
+.almacenamiento-resumen-card span {
+  display: block;
+  color: #a9c9f0;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.almacenamiento-resumen-card strong {
+  font-size: 25px;
+  color: #4ade80;
+}
+
+/* =====================================
+   GRID DE PRODUCTOS
+===================================== */
+
+.almacenamiento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* =====================================
+   TARJETA DE PRODUCTO (BLANCO CON BORDE NEGRO)
+===================================== */
+
+.almacenamiento-producto {
+  background: #ffffff;
+  border: 1px solid #0d0d0d;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 0 #0d0d0d;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.almacenamiento-producto:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 0 #0d0d0d;
+}
+
+/* =====================================
+   IMÁGENES
+===================================== */
+
+.almacenamiento-imagen {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #e8f1fb;
+  border: 1px solid #a9c9f0;
+  border-radius: 10px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.almacenamiento-imagen img {
+  width: 100%;
+  height: 100%;
+  max-width: 130px;
+  max-height: 95px;
+  object-fit: contain;
+  display: block;
+}
+
+.almacenamiento-imagen span {
+  font-size: 40px;
+}
+
+/* =====================================
+   INFORMACIÓN DEL PRODUCTO
+===================================== */
+
+.almacenamiento-producto-info {
+  margin-top: 15px;
+  margin-bottom: 18px;
+}
+
+.almacenamiento-producto-info h3 {
+  margin: 0 0 5px;
+  font-size: 18px;
+  color: #0f1b3d;
+}
+
+.almacenamiento-producto-info p {
+  margin: 0;
+  color: #4a5a6a;
+  font-size: 13px;
+}
+
+/* =====================================
+   UBICACIONES (FONDO BLANCO, BORDE AZUL Y TEXTO LEGIBLE)
+===================================== */
+
+.almacenamiento-ubicaciones h4 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #198754;
+}
+
+.almacenamiento-ubicacion {
+  background: #ffffff; /* Fondo blanco para máximo contraste */
+  border: 1px solid #4a90d9; /* Borde azul claro */
+  border-radius: 10px;
+  padding: 13px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05); /* Sombra sutil */
+}
+
+.almacenamiento-ubicacion-titulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.almacenamiento-ubicacion-titulo strong {
+  color: #0f1b3d; /* Azul oscuro */
+  font-size: 15px;
+}
+
+/* AQUÍ SE CORRIGE EL TEXTO INVISIBLE */
+.almacenamiento-ubicacion p {
+  margin: 7px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #0f1b3d; /* Azul oscuro para que se lea perfectamente */
+  font-weight: 500;
+}
+
+/* Si usas <strong>, <span> o <b> para las etiquetas Condiciones, Motivo, etc. */
+.almacenamiento-ubicacion p strong,
+.almacenamiento-ubicacion p span,
+.almacenamiento-ubicacion p b {
+  color: #0d0d0d; /* Negro sólido */
+  font-weight: 700;
+}
+
+.almacenamiento-sin-ubicacion {
+  background: #f0f2f5;
+  color: #4a5a6a;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  border: 1px dashed #a9c9f0;
+}
+
+/* =====================================
+   BOTONES EDITAR (AZUL) Y ELIMINAR (ROJO)
+===================================== */
+
+.almacenamiento-acciones {
+  display: flex;
+  gap: 8px;
+}
+
+/* Estilo base para ambos botones */
+.almacenamiento-acciones button {
+  color: #ffffff;
+  border: 1px solid #0d0d0d; /* Borde negro sólido */
+  border-radius: 7px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 0 #0d0d0d; /* Sombra sólida inferior */
+}
+
+/* Botón Editar: Azul Claro */
+.almacenamiento-acciones button.btn-editar,
+.almacenamiento-acciones button[data-accion="editar"] {
+  background: #4a90d9;
+}
+
+.almacenamiento-acciones button.btn-editar:hover,
+.almacenamiento-acciones button[data-accion="editar"]:hover {
+  background: #0f1b3d; /* Azul oscuro al pasar el mouse */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 #0d0d0d;
+}
+
+/* Botón Eliminar: Rojo */
+.almacenamiento-acciones button.btn-eliminar,
+.almacenamiento-acciones button[data-accion="eliminar"] {
+  background: #c0392b;
+}
+
+.almacenamiento-acciones button.btn-eliminar:hover,
+.almacenamiento-acciones button[data-accion="eliminar"]:hover {
+  background: #962d22; /* Rojo más oscuro al pasar el mouse */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 #0d0d0d;
+}
+
+/* =====================================
+   MODAL (AZUL OSCURO CON BORDE NEGRO)
+===================================== */
+
+.almacenamiento-modal-fondo {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 13, 13, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.almacenamiento-modal {
+  background: #0f1b3d;
+  width: 100%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 14px;
+  padding: 25px;
+  border: 1px solid #0d0d0d;
+  box-shadow: 0 8px 0 #0d0d0d, 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* =====================================
+   ENCABEZADO DEL MODAL
+===================================== */
+
+.almacenamiento-modal-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.almacenamiento-modal-encabezado h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 21px;
+}
+
+/* Botón de cerrar modal (Rojo) */
+.almacenamiento-modal-encabezado button {
+  background: #c0392b;
+  color: #ffffff;
+  border: 1px solid #0d0d0d;
+  border-radius: 7px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 700;
+  transition: background 0.2s ease;
+  box-shadow: 0 2px 0 #0d0d0d;
+}
+
+.almacenamiento-modal-encabezado button:hover {
+  background: #962d22;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 #0d0d0d;
+}
+
+/* =====================================
+   FORMULARIO
+===================================== */
+
+.almacenamiento-modal form {
+  display: flex;
+  flex-direction: column;
+}
+
+.almacenamiento-modal label {
+  color: #a9c9f0; /* Azul claro para resaltar en el fondo oscuro */
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 7px;
+  margin-top: 12px;
+}
+
+.almacenamiento-modal input,
+.almacenamiento-modal select,
+.almacenamiento-modal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #4a90d9;
+  border-radius: 8px;
+  padding: 11px 12px;
+  font-size: 14px;
+  color: #0d0d0d; /* Texto oscuro para que se lea lo que escribe */
+  outline: none;
+  background: #ffffff; /* Fondo blanco para contraste */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.almacenamiento-modal input::placeholder,
+.almacenamiento-modal textarea::placeholder {
+  color: #7d93b8;
+}
+
+.almacenamiento-modal input:focus,
+.almacenamiento-modal select:focus,
+.almacenamiento-modal textarea:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.35);
+}
+
+.almacenamiento-modal textarea {
+  min-height: 85px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* =====================================
+   BOTONES DEL FORMULARIO
+===================================== */
+
+.almacenamiento-modal-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.almacenamiento-boton-cancelar {
+  background: transparent;
+  color: #a9c9f0;
+  border: 1px solid #4a90d9;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.almacenamiento-boton-cancelar:hover {
+  background: rgba(74, 144, 217, 0.15);
+  color: #ffffff;
+}
+
+.almacenamiento-modal-botones .almacenamiento-boton-principal {
+  padding: 11px 18px;
+}
+
+/* =====================================
+   ESTADOS DE CARGA Y VACÍO
+===================================== */
+
+.almacenamiento-cargando,
+.almacenamiento-vacio {
+  text-align: center;
+  padding: 35px;
+  color: #4a5a6a;
+  background: #ffffff;
+  border: 1px solid #0d0d0d;
+  border-radius: 12px;
+  box-shadow: 0 4px 0 #0d0d0d;
+}
+
+/* =====================================
+   DISEÑO RESPONSIVE
+===================================== */
+
+@media (max-width: 900px) {
+  .almacenamiento-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .almacenamiento-encabezado {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .almacenamiento-resumen {
+    grid-template-columns: 1fr;
+  }
+
+  .almacenamiento-modal {
+    padding: 18px;
+  }
+
+  .almacenamiento-modal-botones {
+    flex-direction: column;
+  }
+
+  .almacenamiento-modal-botones button {
+    width: 100%;
+  }
+}

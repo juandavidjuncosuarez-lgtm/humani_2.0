@@ -1,48 +1,83 @@
 
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const { exec } = require('child_process');
 
-const conexion = require('./src/config/database');
+// =====================================
+// IMPORTAR RUTAS
+// =====================================
+
+const productosRoutes = require('./src/routes/productos.routes');
+const almacenamientoRoutes = require('./src/routes/almacenamiento.routes');
+const proveedoresRoutes = require('./src/routes/proveedores.routes');
+const pedidosRoutes = require('./src/routes/pedidos.routes');
+
+// =====================================
+// CONFIGURACIÓN DEL SERVIDOR
+// =====================================
 
 const app = express();
+const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Ruta principal
+// =====================================
+// RUTA PRINCIPAL
+// =====================================
+
 app.get('/', (req, res) => {
+  res.json({
+    mensaje: 'Servidor HUMANI activo',
+    estado: 'Funcionando correctamente',
+    frontend: 'http://localhost:5173'
+  });
+});
+
+// =====================================
+// RUTA DE PRUEBA
+// =====================================
+
+app.get('/api', (req, res) => {
   res.json({
     mensaje: 'Bienvenido a la API HUMANI',
     estado: 'Funcionando correctamente'
   });
 });
 
-// Probar conexión con MySQL
-app.get('/api/prueba-db', async (req, res) => {
-  try {
-    const [resultado] = await conexion.query(
-      'SELECT DATABASE() AS base_datos'
-    );
+// =====================================
+// MÓDULO PRODUCTOS
+// =====================================
 
-    res.json({
-      mensaje: 'Conexión exitosa con MySQL',
-      base_datos: resultado[0].base_datos
-    });
+app.use('/api/productos', productosRoutes);
 
-  } catch (error) {
-    console.error('Error de conexión:', error.message);
+// =====================================
+// MÓDULO ALMACENAMIENTO
+// =====================================
 
-    res.status(500).json({
-      mensaje: 'No se pudo conectar con MySQL',
-      error: error.message
-    });
-  }
-});
+app.use('/api/almacenamiento', almacenamientoRoutes);
 
-// Iniciar servidor
-const PORT = process.env.PORT || 3000;
+// =====================================
+// MÓDULO PROVEEDORES
+// =====================================
+
+app.use('/api/proveedores', proveedoresRoutes);
+
+// =====================================
+// MÓDULO PEDIDOS
+// =====================================
+
+app.use('/api/pedidos', pedidosRoutes);
+
+// =====================================
+// INICIAR SERVIDOR
+// =====================================
 
 app.listen(PORT, () => {
   console.log(`Servidor HUMANI activo en http://localhost:${PORT}`);
+
+  const url = 'http://localhost:5173';
+
+  exec(`start "" "${url}"`);
 });

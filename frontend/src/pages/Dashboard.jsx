@@ -1,30 +1,35 @@
 
 import { useState } from 'react';
 import './Dashboard.css';
+
 import Productos from './Productos';
+import Almacenamiento from './Almacenamiento';
+import Proveedores from './Proveedores';
+import Pedidos from './Pedidos';
 
 function Dashboard() {
   const [seccion, setSeccion] = useState('Inicio');
 
+  // MODULOS PRINCIPALES
   const modulos = [
     { nombre: 'Inicio', icono: '⌂' },
     { nombre: 'Productos', icono: '▣' },
-    { nombre: 'Pedidos', icono: '▤' },
+    { nombre: 'Almacenamiento', icono: '▤' },
+    { nombre: 'Pedidos', icono: '▧' },
     { nombre: 'Proveedores', icono: '♧' },
-    { nombre: 'Usuarios', icono: '♙' },
   ];
 
+  // RESUMEN GENERAL
   const estadisticas = [
     { titulo: 'Productos', valor: '0', icono: '▣' },
-    { titulo: 'Pedidos', valor: '0', icono: '▤' },
+    { titulo: 'Pedidos', valor: '0', icono: '▧' },
     { titulo: 'Proveedores', valor: '0', icono: '♧' },
-    { titulo: 'Usuarios', valor: '0', icono: '♙' },
   ];
 
   return (
     <div className="dashboard-container">
 
-      {/* Menú lateral */}
+      {/* MENU LATERAL */}
       <aside className="sidebar">
 
         <div className="sidebar-brand">
@@ -68,7 +73,7 @@ function Dashboard() {
 
       </aside>
 
-      {/* Contenido principal */}
+      {/* CONTENIDO PRINCIPAL */}
       <main className="dashboard-main">
 
         <header className="dashboard-header">
@@ -87,9 +92,25 @@ function Dashboard() {
 
         <section className="dashboard-content">
 
+          {/* PRODUCTOS */}
           {seccion === 'Productos' ? (
+
             <Productos />
+
+          ) : seccion === 'Almacenamiento' ? (
+
+            <Almacenamiento />
+
+          ) : seccion === 'Proveedores' ? (
+
+            <Proveedores />
+
+          ) : seccion === 'Pedidos' ? (
+
+            <Pedidos />
+
           ) : seccion === 'Inicio' ? (
+
             <>
               <div className="welcome-banner">
 
@@ -141,32 +162,37 @@ function Dashboard() {
 
               <div className="modules-grid">
 
-                {modulos.slice(1).map((modulo) => (
-                  <button
-                    className="module-card"
-                    key={modulo.nombre}
-                    onClick={() => setSeccion(modulo.nombre)}
-                  >
-                    <span className="module-icon">
-                      {modulo.icono}
-                    </span>
+                {modulos
+                  .filter((modulo) => modulo.nombre !== 'Inicio')
+                  .map((modulo) => (
+                    <button
+                      className="module-card"
+                      key={modulo.nombre}
+                      onClick={() => setSeccion(modulo.nombre)}
+                    >
+                      <span className="module-icon">
+                        {modulo.icono}
+                      </span>
 
-                    <h3>{modulo.nombre}</h3>
+                      <h3>{modulo.nombre}</h3>
 
-                    <p>
-                      Consultar y administrar información
-                    </p>
+                      <p>
+                        Consultar y administrar información
+                      </p>
 
-                    <span className="module-link">
-                      Ingresar →
-                    </span>
-                  </button>
-                ))}
+                      <span className="module-link">
+                        Ingresar →
+                      </span>
+                    </button>
+                  ))}
 
               </div>
             </>
+
           ) : (
+
             <div className="welcome-banner">
+
               <div>
                 <span className="welcome-tag">
                   MÓDULO HUMANI
@@ -175,12 +201,23 @@ function Dashboard() {
                 <h2>{seccion}</h2>
 
                 <p>
-                  Este módulo todavía está pendiente de desarrollo.
+                  Este módulo está pendiente de desarrollo.
+                  Próximamente podrás consultar y administrar
+                  toda su información desde aquí.
                 </p>
+
+                <button
+                  className="module-link"
+                  onClick={() => setSeccion('Inicio')}
+                >
+                  Volver a Inicio
+                </button>
               </div>
 
               <div className="welcome-symbol">H</div>
+
             </div>
+
           )}
 
         </section>
