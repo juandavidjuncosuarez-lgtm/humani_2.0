@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import './Productos.css';
+import { headersAutenticacion } from '../utils/auth';
 
 const API_URL = 'http://localhost:3000/api/productos';
 
@@ -43,7 +44,9 @@ function Productos({ soloLectura = false }) {
       setCargando(true);
       setError('');
 
-      const respuesta = await fetch(API_URL);
+      const respuesta = await fetch(API_URL, {
+        headers: headersAutenticacion()
+      });
 
       if (!respuesta.ok) {
         throw new Error(`Error del servidor: ${respuesta.status}`);
@@ -69,12 +72,12 @@ function Productos({ soloLectura = false }) {
   };
 
   useEffect(() => {
-    const temporizador = setTimeout(() => {
-      cargarProductos();
-    }, 0);
+  const iniciar = async () => {
+    await cargarProductos();
+  };
 
-    return () => clearTimeout(temporizador);
-  }, []);
+  iniciar();
+}, []);
 
   // CAPTURAR DATOS DEL FORMULARIO
   const cambiarCampo = (e) => {
@@ -118,9 +121,7 @@ function Productos({ soloLectura = false }) {
 
       const respuesta = await fetch(url, {
         method: metodo,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headersAutenticacion(true),
         body: JSON.stringify(producto),
       });
 
@@ -178,6 +179,7 @@ function Productos({ soloLectura = false }) {
 
       const respuesta = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
+        headers: headersAutenticacion()
       });
 
       const resultado = await respuesta.json();

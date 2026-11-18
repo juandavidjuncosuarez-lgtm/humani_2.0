@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import './Pedidos.css';
+import { headersAutenticacion } from '../utils/auth';
 
 const API_PEDIDOS = 'http://localhost:3000/api/pedidos';
 const API_PRODUCTOS = 'http://localhost:3000/api/productos';
@@ -21,6 +22,7 @@ function Pedidos({ soloLectura = false }) {
     cantidad: ''
   });
 
+  // CARGA INICIAL DE PEDIDOS, PRODUCTOS Y PROVEEDORES
   useEffect(() => {
     let activo = true;
 
@@ -28,9 +30,15 @@ function Pedidos({ soloLectura = false }) {
       try {
         const [resPedidos, resProductos, resProveedores] =
           await Promise.all([
-            fetch(API_PEDIDOS),
-            fetch(API_PRODUCTOS),
-            fetch(API_PROVEEDORES)
+            fetch(API_PEDIDOS, {
+              headers: headersAutenticacion()
+            }),
+            fetch(API_PRODUCTOS, {
+              headers: headersAutenticacion()
+            }),
+            fetch(API_PROVEEDORES, {
+              headers: headersAutenticacion()
+            })
           ]);
 
         if (!resPedidos.ok || !resProductos.ok || !resProveedores.ok) {
@@ -68,9 +76,12 @@ function Pedidos({ soloLectura = false }) {
     };
   }, []);
 
+  // ACTUALIZAR LISTADO DE PEDIDOS
   const cargarPedidos = async () => {
     try {
-      const respuesta = await fetch(API_PEDIDOS);
+      const respuesta = await fetch(API_PEDIDOS, {
+        headers: headersAutenticacion()
+      });
 
       if (!respuesta.ok) {
         throw new Error('Error al consultar los pedidos');
@@ -84,6 +95,7 @@ function Pedidos({ soloLectura = false }) {
     }
   };
 
+  // CONTROLAR CAMBIOS DEL FORMULARIO
   const manejarCambio = (e) => {
     const { name, value } = e.target;
 
@@ -93,6 +105,7 @@ function Pedidos({ soloLectura = false }) {
     }));
   };
 
+  // REGISTRAR UN NUEVO PEDIDO
   const guardarPedido = async (e) => {
     e.preventDefault();
 
@@ -111,9 +124,7 @@ function Pedidos({ soloLectura = false }) {
     try {
       const respuesta = await fetch(API_PEDIDOS, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: headersAutenticacion(true),
         body: JSON.stringify({
           proveedor_id: Number(formulario.proveedor_id),
           producto_id: Number(formulario.producto_id),
@@ -144,15 +155,14 @@ function Pedidos({ soloLectura = false }) {
     }
   };
 
+  // CAMBIAR ESTADO DEL PEDIDO
   const cambiarEstado = async (id, estado) => {
     if (soloLectura) return;
 
     try {
       const respuesta = await fetch(`${API_PEDIDOS}/${id}/estado`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: headersAutenticacion(true),
         body: JSON.stringify({ estado })
       });
 
@@ -171,6 +181,7 @@ function Pedidos({ soloLectura = false }) {
     }
   };
 
+  // ELIMINAR PEDIDO
   const eliminarPedido = async (id) => {
     if (soloLectura) return;
 
@@ -182,7 +193,8 @@ function Pedidos({ soloLectura = false }) {
 
     try {
       const respuesta = await fetch(`${API_PEDIDOS}/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: headersAutenticacion()
       });
 
       const resultado = await respuesta.json();
@@ -200,6 +212,7 @@ function Pedidos({ soloLectura = false }) {
     }
   };
 
+  // FORMATEAR VALORES EN PESOS COLOMBIANOS
   const formatoPrecio = (valor) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -208,6 +221,7 @@ function Pedidos({ soloLectura = false }) {
     }).format(Number(valor) || 0);
   };
 
+  // FORMATEAR FECHA DEL PEDIDO
   const formatoFecha = (fecha) => {
     if (!fecha) return 'Sin fecha';
 
@@ -220,12 +234,14 @@ function Pedidos({ soloLectura = false }) {
     return fechaPedido.toLocaleDateString('es-CO');
   };
 
+  // ASIGNAR CLASE VISUAL SEGÚN EL ESTADO
   const obtenerClaseEstado = (estado) => {
     if (estado === 'Entregado') return 'estado-entregado';
     if (estado === 'Cancelado') return 'estado-cancelado';
     return 'estado-proceso';
   };
 
+  // CONTABILIZAR PEDIDOS POR ESTADO
   const pendientes = pedidos.filter(
     (pedido) => pedido.estado === 'Pendiente'
   ).length;
@@ -246,6 +262,7 @@ function Pedidos({ soloLectura = false }) {
     );
   }
 
+  // VISTA PRINCIPAL
   return (
     <div className="pedidos-contenedor">
 

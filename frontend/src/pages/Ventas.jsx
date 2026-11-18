@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import './Ventas.css';
+import { headersAutenticacion } from '../utils/auth';
 
 const API_VENTAS = 'http://localhost:3000/api/ventas';
 const API_PRODUCTOS = 'http://localhost:3000/api/productos';
@@ -15,15 +16,16 @@ function Ventas() {
   const [mensaje, setMensaje] = useState('');
   const [tipoMensaje, setTipoMensaje] = useState('');
 
-  // =====================================
   // CARGAR PRODUCTOS Y VENTAS
-  // =====================================
-
   const cargarDatos = async () => {
     try {
       const [resVentas, resProductos] = await Promise.all([
-        fetch(API_VENTAS),
-        fetch(API_PRODUCTOS)
+        fetch(API_VENTAS, {
+          headers: headersAutenticacion()
+        }),
+        fetch(API_PRODUCTOS, {
+          headers: headersAutenticacion()
+        })
       ]);
 
       if (!resVentas.ok || !resProductos.ok) {
@@ -46,14 +48,19 @@ function Ventas() {
     }
   };
 
+  // CARGA INICIAL
   useEffect(() => {
     let activo = true;
 
     const iniciar = async () => {
       try {
         const [resVentas, resProductos] = await Promise.all([
-          fetch(API_VENTAS),
-          fetch(API_PRODUCTOS)
+          fetch(API_VENTAS, {
+            headers: headersAutenticacion()
+          }),
+          fetch(API_PRODUCTOS, {
+            headers: headersAutenticacion()
+          })
         ]);
 
         if (!resVentas.ok || !resProductos.ok) {
@@ -89,10 +96,7 @@ function Ventas() {
     };
   }, []);
 
-  // =====================================
   // REGISTRAR VENTA
-  // =====================================
-
   const registrarVenta = async (e) => {
     e.preventDefault();
 
@@ -108,9 +112,7 @@ function Ventas() {
     try {
       const respuesta = await fetch(API_VENTAS, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: headersAutenticacion(true),
         body: JSON.stringify({
           producto_id: Number(productoId),
           cantidad: Number(cantidad)
@@ -139,10 +141,7 @@ function Ventas() {
     }
   };
 
-  // =====================================
   // FORMATO DE PESOS COLOMBIANOS
-  // =====================================
-
   const formatoPesos = (valor) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -151,10 +150,7 @@ function Ventas() {
     }).format(Number(valor) || 0);
   };
 
-  // =====================================
   // ESTADÍSTICAS
-  // =====================================
-
   const totalVentas = ventas.reduce(
     (total, venta) => total + Number(venta.total),
     0
@@ -169,6 +165,7 @@ function Ventas() {
     return <div className="ventas-contenedor">Cargando ventas...</div>;
   }
 
+  // VISTA PRINCIPAL
   return (
     <div className="ventas-contenedor">
 
@@ -186,7 +183,6 @@ function Ventas() {
       )}
 
       {/* ESTADÍSTICAS */}
-
       <div className="ventas-estadisticas">
 
         <div className="venta-estadistica">
@@ -207,7 +203,6 @@ function Ventas() {
       </div>
 
       {/* FORMULARIO */}
-
       <div className="ventas-formulario">
 
         <h2>Registrar nueva venta</h2>
@@ -256,7 +251,6 @@ function Ventas() {
       </div>
 
       {/* HISTORIAL */}
-
       <div className="ventas-historial">
 
         <h2>Historial de ventas</h2>

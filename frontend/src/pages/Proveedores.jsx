@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import './Proveedores.css';
+import { headersAutenticacion } from '../utils/auth';
 
 const API_URL = 'http://localhost:3000/api/proveedores';
 
@@ -21,7 +22,9 @@ function Proveedores({ soloLectura = false }) {
   // CARGAR PROVEEDORES
   const cargarProveedores = async () => {
     try {
-      const respuesta = await fetch(API_URL);
+      const respuesta = await fetch(API_URL, {
+        headers: headersAutenticacion()
+      });
 
       if (!respuesta.ok) {
         throw new Error('Error al consultar los proveedores');
@@ -44,7 +47,9 @@ function Proveedores({ soloLectura = false }) {
 
     const consultar = async () => {
       try {
-        const respuesta = await fetch(API_URL);
+        const respuesta = await fetch(API_URL, {
+          headers: headersAutenticacion()
+        });
 
         if (!respuesta.ok) {
           throw new Error('Error al consultar los proveedores');
@@ -114,9 +119,7 @@ function Proveedores({ soloLectura = false }) {
 
       const respuesta = await fetch(url, {
         method: editando ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: headersAutenticacion(true),
         body: JSON.stringify(formulario)
       });
 
@@ -176,7 +179,8 @@ function Proveedores({ soloLectura = false }) {
 
     try {
       const respuesta = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: headersAutenticacion()
       });
 
       const resultado = await respuesta.json();

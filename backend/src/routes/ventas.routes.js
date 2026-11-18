@@ -3,11 +3,15 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 
+const {
+  verificarToken
+} = require('../middleware/auth.middleware');
+
 // =====================================
 // CONSULTAR TODAS LAS VENTAS
 // =====================================
 
-router.get('/', async (req, res) => {
+router.get('/', verificarToken, async (req, res) => {
   try {
     const sql = `
       SELECT
@@ -39,9 +43,10 @@ router.get('/', async (req, res) => {
 
 // =====================================
 // REGISTRAR UNA VENTA
+// Los tres roles pueden registrar ventas
 // =====================================
 
-router.post('/', async (req, res) => {
+router.post('/', verificarToken, async (req, res) => {
   let conexion;
 
   try {

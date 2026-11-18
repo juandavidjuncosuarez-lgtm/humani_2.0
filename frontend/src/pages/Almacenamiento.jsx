@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import './Almacenamiento.css';
 import { obtenerImagenProducto } from '../utils/imagenes';
+import { headersAutenticacion } from '../utils/auth';
 
 const API_PRODUCTOS = 'http://localhost:3000/api/productos';
 const API_ALMACENAMIENTO = 'http://localhost:3000/api/almacenamiento';
@@ -35,9 +36,15 @@ function Almacenamiento({ soloLectura = false }) {
         respuestaUbicaciones,
         respuestaRegistros
       ] = await Promise.all([
-        fetch(API_PRODUCTOS),
-        fetch(`${API_ALMACENAMIENTO}/ubicaciones`),
-        fetch(API_ALMACENAMIENTO)
+        fetch(API_PRODUCTOS, {
+          headers: headersAutenticacion()
+        }),
+        fetch(`${API_ALMACENAMIENTO}/ubicaciones`, {
+          headers: headersAutenticacion()
+        }),
+        fetch(API_ALMACENAMIENTO, {
+          headers: headersAutenticacion()
+        })
       ]);
 
       if (
@@ -58,7 +65,7 @@ function Almacenamiento({ soloLectura = false }) {
       setMensaje('');
 
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error al cargar almacenamiento:', error);
       setMensaje('No fue posible cargar la información.');
     } finally {
       setCargando(false);
@@ -67,11 +74,11 @@ function Almacenamiento({ soloLectura = false }) {
 
   // CARGAR DATOS AL ABRIR EL MÓDULO
   useEffect(() => {
-    const temporizador = setTimeout(() => {
-      cargarDatos();
-    }, 0);
+    const iniciar = async () => {
+      await cargarDatos();
+    };
 
-    return () => clearTimeout(temporizador);
+    iniciar();
   }, []);
 
   // ABRIR FORMULARIO PARA NUEVO REGISTRO
@@ -117,9 +124,7 @@ function Almacenamiento({ soloLectura = false }) {
 
       const respuesta = await fetch(url, {
         method: editando ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: headersAutenticacion(true),
         body: JSON.stringify({
           ...formulario,
           producto_id: Number(formulario.producto_id),
@@ -158,7 +163,10 @@ function Almacenamiento({ soloLectura = false }) {
     try {
       const respuesta = await fetch(
         `${API_ALMACENAMIENTO}/${id}`,
-        { method: 'DELETE' }
+        {
+          method: 'DELETE',
+          headers: headersAutenticacion()
+        }
       );
 
       const resultado = await respuesta.json();

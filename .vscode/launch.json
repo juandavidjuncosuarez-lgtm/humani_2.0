@@ -1,12 +1,39 @@
-
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node-terminal",
-            "request": "launch",
-            "name": "Abrir HUMANI en navegador predeterminado",
-            "command": "Start-Process http://localhost:5173"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "HUMANI - Backend",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/server.js",
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "HUMANI - Frontend",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Abrir HUMANI en navegador predeterminado",
+      "command": "Start-Process http://localhost:5173"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "HUMANI - Ejecutar todo",
+      "configurations": [
+        "HUMANI - Backend",
+        "HUMANI - Frontend"
+      ],
+      "stopAll": true
+    }
+  ]
 }
