@@ -1,7 +1,8 @@
 
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
-const { exec } = require('child_process');
 
 // =====================================
 // IMPORTAR RUTAS
@@ -20,7 +21,7 @@ const usuariosRoutes = require('./src/routes/usuarios.routes');
 // =====================================
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -31,11 +32,10 @@ app.use(express.urlencoded({ extended: true }));
 // =====================================
 
 app.get('/', (req, res) => {
-  res.json({
-    mensaje: 'Servidor HUMANI activo',
-    estado: 'Funcionando correctamente',
-    frontend: 'http://localhost:5173'
-  });
+    res.json({
+        mensaje: 'Servidor HUMANI activo',
+        estado: 'Funcionando correctamente'
+    });
 });
 
 // =====================================
@@ -43,10 +43,10 @@ app.get('/', (req, res) => {
 // =====================================
 
 app.get('/api', (req, res) => {
-  res.json({
-    mensaje: 'Bienvenido a la API HUMANI',
-    estado: 'Funcionando correctamente'
-  });
+    res.json({
+        mensaje: 'Bienvenido a la API HUMANI',
+        estado: 'Funcionando correctamente'
+    });
 });
 
 // =====================================
@@ -70,10 +70,6 @@ app.use('/api/usuarios', usuariosRoutes);
 // INICIAR SERVIDOR
 // =====================================
 
-app.listen(PORT, () => {
-  console.log(`Servidor HUMANI activo en http://localhost:${PORT}`);
-
-  const url = 'http://localhost:5173';
-
-  exec(`start "" "${url}"`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor HUMANI activo en puerto ${PORT}`);
 });
