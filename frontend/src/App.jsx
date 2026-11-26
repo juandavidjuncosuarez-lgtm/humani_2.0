@@ -32,7 +32,7 @@ function App() {
       setMensaje('');
 
       const respuesta = await fetch(
-        'http://localhost:3000/api/auth/login',
+        'https://humani-ok1w.onrender.com/api/auth/login',
         {
           method: 'POST',
           headers: {

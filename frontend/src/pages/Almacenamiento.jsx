@@ -4,8 +4,8 @@ import './Almacenamiento.css';
 import { obtenerImagenProducto } from '../utils/imagenes';
 import { headersAutenticacion } from '../utils/auth';
 
-const API_PRODUCTOS = 'http://localhost:3000/api/productos';
-const API_ALMACENAMIENTO = 'http://localhost:3000/api/almacenamiento';
+const API_PRODUCTOS = 'https://humani-ok1w.onrender.com/api/productos';
+const API_ALMACENAMIENTO = 'https://humani-ok1w.onrender.com/api/almacenamiento';
 
 function Almacenamiento({ soloLectura = false }) {
   const [productos, setProductos] = useState([]);

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import './Usuarios.css';
 import { headersAutenticacion } from '../utils/auth';
 
-const API_URL = 'http://localhost:3000/api/usuarios';
+const API_URL = 'https://humani-ok1w.onrender.com/api/usuarios';
 
 function Usuarios({ token }) {
   const [usuarios, setUsuarios] = useState([]);

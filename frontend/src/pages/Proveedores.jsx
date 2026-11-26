@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import './Proveedores.css';
 import { headersAutenticacion } from '../utils/auth';
 
-const API_URL = 'http://localhost:3000/api/proveedores';
+const API_URL = 'https://humani-ok1w.onrender.com/api/proveedores';
 
 function Proveedores({ soloLectura = false }) {
   const [proveedores, setProveedores] = useState([]);

@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import './Ventas.css';
 import { headersAutenticacion } from '../utils/auth';
 
-const API_VENTAS = 'http://localhost:3000/api/ventas';
-const API_PRODUCTOS = 'http://localhost:3000/api/productos';
+const API_VENTAS = 'https://humani-ok1w.onrender.com/api/ventas';
+const API_PRODUCTOS = 'https://humani-ok1w.onrender.com/api/productos';
 
 function Ventas() {
   const [ventas, setVentas] = useState([]);

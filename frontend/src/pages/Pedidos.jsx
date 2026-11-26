@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import './Pedidos.css';
 import { headersAutenticacion } from '../utils/auth';
 
-const API_PEDIDOS = 'http://localhost:3000/api/pedidos';
-const API_PRODUCTOS = 'http://localhost:3000/api/productos';
-const API_PROVEEDORES = 'http://localhost:3000/api/proveedores';
+const API_PEDIDOS = 'https://humani-ok1w.onrender.com/api/pedidos';
+const API_PRODUCTOS = 'https://humani-ok1w.onrender.com/api/productos';
+const API_PROVEEDORES = 'https://humani-ok1w.onrender.com/api/proveedores';
 
 function Pedidos({ soloLectura = false }) {
   const [pedidos, setPedidos] = useState([]);
